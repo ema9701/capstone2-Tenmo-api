@@ -74,8 +74,8 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    List<Transaction> allTransactions() {
-        String sql = "SELECT transaction_id, account_id_in, account_id_out, is_requesting FROM transaction;";
+    public  List<Transaction> allTransactions() {
+        String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting FROM transaction;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
         List<Transaction> transactions = new ArrayList<>();
@@ -83,17 +83,72 @@ public class JdbcTransactionDao implements TransactionDao {
         while (results.next()) {
             transactions.add(mapRowToTransaction(results));
         }
+        return transactions;
     }
 
-    List<Transaction> transactionByUserId(int user_id);
+    @Override
+    public List<Transaction> transactionByUserId(int user_id) {
+        List<Transaction> transactionsUserId = new ArrayList<>();
+        String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
+                "FROM transaction " +
+                "WHERE " +
+                "user_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, user_id);
+        while (results.next()) {
+            transactionsUserId.add(mapRowToTransaction(results));
+        }
+        return transactionsUserId;
+    }
 
-    List<Transaction> listByOutgoingAccount(int account_id_out);
+    @Override
+    public List<Transaction> listByOutgoingAccount(int account_id_out) {
+        List<Transaction> outgoingId = new ArrayList<>();
+        String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
+                "FROM transaction " +
+                "WHERE account_id_out = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id_out);
+        while (results.next()) {
+            outgoingId.add(mapRowToTransaction(results));
+        }
+        return outgoingId;
+    }
 
-    List<Transaction> listByIncomingAccount(int account_id_in);
+    @Override
+    public List<Transaction> listByIncomingAccount(int account_id_in){
+        List<Transaction> incomingId = new ArrayList<>();
+        String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
+                "FROM transaction " +
+                "WHERE account_id_in = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id_in);
+        while (results.next()) {
+            incomingId.add(mapRowToTransaction(results));
+        }
+        return incomingId;
+    }
 
-    BigDecimal getTransactionAmount(int transaction_id);
+    @Override
+    public BigDecimal getTransactionAmount(int transaction_id) {
+        BigDecimal amount = new BigDecimal("0.00");
+        String sql = "SELECT transaction_amount FROM transaction WHERE transaction_id = ?; ";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transaction_id);
+        if (results.next()) {
+            Transaction transaction = mapRowToTransaction(results);
+            amount = transaction.getTransactionAmount();
+            return amount;
+        }
+        return amount;
+    }
 
-    Boolean isApproved(int transaction_id);
+    @Override
+    public Boolean isRequesting(int transaction_id) {
+        Transaction transaction = new Transaction();
+        String sql = "SELECT is_requesting FROM transaction WHERE transaction_id = ?; ";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transaction_id);
+        if (results.next()) {
+            transaction = mapRowToTransaction(results);
+        }
+            return transaction.getRequested();
+    }
 
     private Transaction mapRowToTransaction(SqlRowSet rowSet) {
         Transaction transaction = new Transaction();

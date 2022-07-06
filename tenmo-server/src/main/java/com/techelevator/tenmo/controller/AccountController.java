@@ -97,7 +97,7 @@ public class AccountController {
 
     @GetMapping(path = "/transaction/{id}")
     public Boolean isApproved(@PathVariable int transaction_id) {
-        return transactionDao.isApproved(transaction_id);
+        return transactionDao.isRequesting(transaction_id);
     }
 
 

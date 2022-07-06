@@ -17,12 +17,12 @@ public interface TransactionDao {
 
     BigDecimal getTransactionAmount(int transaction_id);
 
-    Boolean isApproved(int transaction_id);
+    Boolean isRequesting(int transaction_id);
 
     boolean subtractFromBalance(BigDecimal balance, int account_id) throws IllegalArgumentException;
 
     boolean addToBalance(BigDecimal balance, int account_id) throws IllegalArgumentException;
 
-    public boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount);
+    boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount);
 
 }
