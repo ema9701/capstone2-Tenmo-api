@@ -10,7 +10,7 @@ public class Transaction {
     private BigDecimal transactionAmount;
     private Boolean isRequested;
 
-    public Transaction(){
+    public Transaction() {
 
     }
 
@@ -53,4 +53,14 @@ public class Transaction {
     public void setRequested(Boolean requested) {
         isRequested = requested;
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "account_receiving_id=" + account_id_in +
+                ", account_sending_id='" + account_id_out +
+                ", transfer_amount = " + transactionAmount +
+                '}';
+    }
 }
+

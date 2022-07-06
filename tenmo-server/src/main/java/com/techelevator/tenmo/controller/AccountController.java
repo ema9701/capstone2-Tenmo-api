@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 @PreAuthorize("isAuthenticated()")
 @RestController
 public class AccountController {
@@ -32,14 +33,28 @@ public class AccountController {
     @GetMapping(path = "/account")
     public List<Account> list() {return accountDao.findAccounts();}
 
+    @GetMapping(path = "/account")
+    public List<Account> findUserIds() {return accountDao.findUserIds();}
+
     @GetMapping(path = "/account/{id}")
-    public Account accountByUserId(@PathVariable int user_id)  {
+    public Account accountByUserId(@PathVariable Long user_id)  {
         return accountDao.findAccountByUserId(user_id);
     }
 
     @PutMapping(path = "/account/{id}")
-    public BigDecimal updateBalance(@PathVariable BigDecimal balance, int account_id) {
-        return accountDao.updateBalance(balance, account_id);
+    public boolean subtractFromBalance(@PathVariable BigDecimal balance, int account_id) {
+        return accountDao.subtractFromBalance(balance, account_id);
+    }
+
+    @PutMapping(path = "/account/{id}")
+    public boolean addToBalance(@PathVariable BigDecimal balance, int account_id) {
+        return accountDao.addToBalance(balance, account_id);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping (path = "/account/{id}")
+    public BigDecimal getBalanceByUserId(int user_id){
+        return accountDao.getBalanceByUserId(user_id);
     }
 
     @GetMapping(path = "/user")

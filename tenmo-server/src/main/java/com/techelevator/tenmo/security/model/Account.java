@@ -6,7 +6,7 @@ public class Account {
 
 
     private int account_id;
-    private int user_id;
+    private Long user_id;
     private BigDecimal balance;
 
     public Account() {
@@ -21,11 +21,11 @@ public class Account {
         this.account_id = account_id;
     }
 
-    public int getUser_id() {
+    public Long getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
 
