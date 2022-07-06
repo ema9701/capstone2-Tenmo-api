@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.security.auth.login.AccountNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,40 +52,6 @@ public class JdbcAccountDao implements AccountDao{
         return account;
     }
 
-    @Override
-    public boolean subtractFromBalance(BigDecimal money, int account_id) throws IllegalArgumentException {
-        String sql = "UPDATE balance SET balance = balance - ? WHERE account_id = ?;";
-        try {
-            SqlRowSet updatedBalance = jdbcTemplate.queryForRowSet(sql, money, account_id);
-        } catch (IllegalArgumentException e){
-            System.out.println("Please choose an existing account_id");
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean addToBalance(BigDecimal money, int account_id) throws IllegalArgumentException {
-
-        Account account = new Account();
-
-        String sql = "UPDATE balance SET balance = balance + ? WHERE account_id = ?;";
-        if (account.getAccount_id() == account_id) {
-            System.out.println("You cannot send money to yourself.");
-            return false;
-        } else {
-            try {
-                SqlRowSet updatedBalance = jdbcTemplate.queryForRowSet(sql, money, account_id);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Please choose an existing account_id");
-                return false;
-            }
-
-            return true;
-        }
-    }
-
 
     @Override
     public BigDecimal getBalanceByUserId(int user_id){
@@ -111,6 +78,21 @@ public class JdbcAccountDao implements AccountDao{
             user_ids.add(accountSql);
         }
         return user_ids;
+    }
+    @Override
+    public BigDecimal getBalance(int account_id){
+        String sql = "SELECT balance FROM account WHERE account_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id);
+        BigDecimal bigDecimal = new BigDecimal("0.00");
+
+        if(results.next()){
+            Account account = mapRowToAccount(results);
+            return account.getBalance();
+        }
+        else {
+            return bigDecimal;
+        }
+
     }
 
     private Account mapRowToAccount(SqlRowSet rowSet){

@@ -12,13 +12,10 @@ public interface AccountDao {
 
     Account findAccountByUserId(Long user_id);
 
-    boolean subtractFromBalance(BigDecimal balance, int account_id) throws IllegalArgumentException;
-
-    boolean addToBalance(BigDecimal balance, int account_id) throws IllegalArgumentException;
-
     BigDecimal getBalanceByUserId(int user_id);
 
     List<Account> findUserIds();
 
+    BigDecimal getBalance(int account_id);
 
 }

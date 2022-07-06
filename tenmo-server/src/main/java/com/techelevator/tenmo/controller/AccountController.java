@@ -43,12 +43,12 @@ public class AccountController {
 
     @PutMapping(path = "/account/{id}")
     public boolean subtractFromBalance(@PathVariable BigDecimal balance, int account_id) {
-        return accountDao.subtractFromBalance(balance, account_id);
+        return transactionDao.subtractFromBalance(balance, account_id);
     }
 
     @PutMapping(path = "/account/{id}")
     public boolean addToBalance(@PathVariable BigDecimal balance, int account_id) {
-        return accountDao.addToBalance(balance, account_id);
+        return transactionDao.addToBalance(balance, account_id);
     }
 
     @PreAuthorize("hasRole('USER')")
