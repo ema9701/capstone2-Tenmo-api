@@ -36,7 +36,7 @@ public class AccountController {
 //    @GetMapping(path = "/account")
 //    public List<Account> findUserIds() {return accountDao.findUserIds();}
 
-    @GetMapping(path = "/account/{id}")
+    @GetMapping(path = "/account/{user_id}")
     public Account accountByUserId(@PathVariable Long user_id)  {
         return accountDao.findAccountByUserId(user_id);
     }
@@ -65,8 +65,8 @@ public class AccountController {
 //        return userDao.findByUsername(username);
 //    }
 
-    @GetMapping(path = "/user?username_like=")
-    public int findIdByUserName(@RequestParam String username) {
+    @GetMapping(path = "/user/{username}")
+    public int findIdByUserName(@PathVariable String username) {
         return userDao.findIdByUsername(username);
     }
 
