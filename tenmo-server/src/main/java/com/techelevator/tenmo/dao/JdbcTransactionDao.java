@@ -17,8 +17,9 @@ public class JdbcTransactionDao implements TransactionDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTransactionDao(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public JdbcTransactionDao(AccountDao accountDao, JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.accountDao = accountDao;
     }
 
     @Override
@@ -58,15 +59,22 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount) {
         BigDecimal zeroBalance = new BigDecimal("0.00");
+        BigDecimal balance = accountDao.getBalance(account_id_out);
 
-//        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
-//            System.out.println("You must transfer more than 0.00");
-//            return false;
-//        }
-//        if (accountDao.getBalance(account_id_out).compareTo(transferAmount) == -1) {
-//            System.out.println("You cannot transfer an amount greater than your balance.");
-//            return false;
-//        }
+        if (account_id_in == account_id_out){
+            System.out.println("You may not send funds to yourself.");
+            return false;
+        }
+
+        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
+            System.out.println("You must transfer more than 0.00");
+            return false;
+        }
+
+        if (balance.compareTo(transferAmount) == -1) {
+            System.out.println("You cannot transfer an amount greater than your balance.");
+            return false;
+        }
         subtractFromBalance(transferAmount, account_id_out);
         addToBalance(transferAmount, account_id_in);
         return true;
