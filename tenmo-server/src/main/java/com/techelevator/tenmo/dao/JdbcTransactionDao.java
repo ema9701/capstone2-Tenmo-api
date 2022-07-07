@@ -23,9 +23,9 @@ public class JdbcTransactionDao implements TransactionDao {
 
     @Override
     public boolean subtractFromBalance(BigDecimal money, int account_id) throws IllegalArgumentException {
-        String sql = "UPDATE balance SET balance = balance - ? WHERE account_id = ?; ";
+        String sql = "UPDATE account SET balance = balance - ? WHERE account_id = ?; ";
         try {
-            SqlRowSet updatedBalance = jdbcTemplate.queryForRowSet(sql, money, account_id);
+            jdbcTemplate.update(sql, money, account_id);
         } catch (IllegalArgumentException e) {
             System.out.println("Please choose an existing account_id");
             return false;
@@ -39,13 +39,13 @@ public class JdbcTransactionDao implements TransactionDao {
 
         Account account = new Account();
 
-        String sql = "UPDATE balance SET balance = balance + ? WHERE account_id = ?; ";
+        String sql = "UPDATE account SET balance = balance + ? WHERE account_id = ?; ";
         if (account.getAccount_id() == account_id) {
             System.out.println("You cannot send money to yourself.");
             return false;
         } else {
             try {
-                SqlRowSet updatedBalance = jdbcTemplate.queryForRowSet(sql, money, account_id);
+                jdbcTemplate.update(sql, money, account_id);
             } catch (IllegalArgumentException e) {
                 System.out.println("Please choose an existing account_id");
                 return false;
@@ -59,14 +59,14 @@ public class JdbcTransactionDao implements TransactionDao {
     public boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount) {
         BigDecimal zeroBalance = new BigDecimal("0.00");
 
-        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
-            System.out.println("You must transfer more than 0.00");
-            return false;
-        }
-        if (accountDao.getBalance(account_id_out).compareTo(transferAmount) == -1) {
-            System.out.println("You cannot transfer an amount greater than your balance.");
-            return false;
-        }
+//        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
+//            System.out.println("You must transfer more than 0.00");
+//            return false;
+//        }
+//        if (accountDao.getBalance(account_id_out).compareTo(transferAmount) == -1) {
+//            System.out.println("You cannot transfer an amount greater than your balance.");
+//            return false;
+//        }
         subtractFromBalance(transferAmount, account_id_out);
         addToBalance(transferAmount, account_id_in);
         return true;

@@ -40,16 +40,17 @@ public class AccountController {
     public Account accountByUserId(@PathVariable Long user_id)  {
         return accountDao.findAccountByUserId(user_id);
     }
-
+//
 //    @PutMapping(path = "/account/{id}")
 //    public boolean subtractFromBalance(@PathVariable BigDecimal balance, int account_id) {
 //        return transactionDao.subtractFromBalance(balance, account_id);
 //    }
-//
-//    @PutMapping(path = "/account/{id}")
-//    public boolean addToBalance(@PathVariable BigDecimal balance, int account_id) {
-//        return transactionDao.addToBalance(balance, account_id);
-//    }
+
+    @PutMapping(path = "/transaction")
+    public boolean transferMoney(@RequestParam int account_id_in, @RequestParam int account_id_out, @RequestParam BigDecimal transferAmount) {
+        return transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
+    }
+
 
 //    @PreAuthorize("hasRole('USER')")
 //    @GetMapping (path = "/account/{id}")
