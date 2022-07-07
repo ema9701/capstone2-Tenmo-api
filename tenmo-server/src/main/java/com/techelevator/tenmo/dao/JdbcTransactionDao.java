@@ -17,9 +17,8 @@ public class JdbcTransactionDao implements TransactionDao {
 
     private final JdbcTemplate jdbcTemplate;
 
+    public JdbcTransactionDao(AccountDao accountDao, JdbcTemplate jdbcTemplate) {
 
-
-    public JdbcTransactionDao(JdbcTemplate jdbcTemplate, AccountDao accountDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.accountDao = accountDao;
     }
@@ -61,22 +60,24 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount) {
         BigDecimal zeroBalance = new BigDecimal("0.00");
-        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
-            System.out.println("You must transfer more than 0.00");
+        BigDecimal balance = accountDao.getBalance(account_id_out);
+        Transaction transaction = new Transaction();
+        if (account_id_in == account_id_out) {
+            System.out.println("You may not send funds to yourself.");
             return false;
         }
-        if (accountDao.getBalance(account_id_out).compareTo(transferAmount) == -1) {
+        if (balance.compareTo(transferAmount) == -1) {
             System.out.println("You cannot transfer an amount greater than your balance.");
             return false;
         }
         subtractFromBalance(transferAmount, account_id_out);
         addToBalance(transferAmount, account_id_in);
-        return true;
 
+        return true;
     }
 
     @Override
-    public  List<Transaction> allTransactions() {
+    public List<Transaction> allTransactions() {
         String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting FROM transaction; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
@@ -116,7 +117,7 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public List<Transaction> listByIncomingAccount(int account_id_in){
+    public List<Transaction> listByIncomingAccount(int account_id_in) {
         List<Transaction> incomingId = new ArrayList<>();
         String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
                 "FROM transaction " +
@@ -149,7 +150,7 @@ public class JdbcTransactionDao implements TransactionDao {
         if (results.next()) {
             transaction = mapRowToTransaction(results);
         }
-            return transaction.getRequested();
+        return transaction.getRequested();
     }
 
     private Transaction mapRowToTransaction(SqlRowSet rowSet) {
@@ -161,4 +162,6 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setRequested(rowSet.getBoolean("is_requesting"));
         return transaction;
     }
+
+
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class JdbcAccountDao implements AccountDao{
+public class JdbcAccountDao implements AccountDao {
 
     public JdbcAccountDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -26,13 +26,13 @@ public class JdbcAccountDao implements AccountDao{
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Account> findAccounts(){
+    public List<Account> findAccounts() {
         List<Account> account = new ArrayList();
 
         String sql = "SELECT user_id, account_id, balance FROM account;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
-        while(results.next()){
+        while (results.next()) {
             Account accountSql = mapRowToAccount(results);
             account.add(accountSql);
         }
@@ -43,10 +43,10 @@ public class JdbcAccountDao implements AccountDao{
     public Account findAccountByUserId(Long user_id) {
         Account account = null;
         String sql = " SELECT user_id, account_id, balance FROM account " +
-                     " WHERE user_id = ?; ";
+                " WHERE user_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, user_id);
 
-        while(results.next()){
+        while (results.next()) {
             account = mapRowToAccount(results);
         }
         return account;
@@ -54,12 +54,12 @@ public class JdbcAccountDao implements AccountDao{
 
 
     @Override
-    public BigDecimal getBalanceByUserId(int user_id){
+    public BigDecimal getBalanceByUserId(int user_id) {
         String sql = "SELECT balance FROM account WHERE user_id = ?; ";
         SqlRowSet rowset = jdbcTemplate.queryForRowSet(sql, user_id);
         BigDecimal balance = new BigDecimal("0.00");
 
-        if (rowset.next()){
+        if (rowset.next()) {
             balance = rowset.getBigDecimal("balance");
         } else {
             throw new RuntimeException();
@@ -68,34 +68,33 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
-    public List<Account> findUserIds(){
+    public List<Account> findUserIds() {
         List<Account> user_ids = new ArrayList<>();
         String sql = "SELECT user_id FROM account; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
-        while(results.next()){
+        while (results.next()) {
             Account accountSql = mapRowToAccount(results);
             user_ids.add(accountSql);
         }
         return user_ids;
     }
+
     @Override
-    public BigDecimal getBalance(int account_id){
+    public BigDecimal getBalance(int account_id) {
         String sql = "SELECT balance FROM account WHERE account_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id);
-        BigDecimal bigDecimal = new BigDecimal("0.00");
+        BigDecimal balance = new BigDecimal("0.00");
 
-        if(results.next()){
-            Account account = mapRowToAccount(results);
-            return account.getBalance();
+        if (results.next()) {
+            balance = results.getBigDecimal("balance");
+        } else {
+            return balance;
         }
-        else {
-            return bigDecimal;
-        }
-
+        return balance;
     }
 
-    private Account mapRowToAccount(SqlRowSet rowSet){
+    private Account mapRowToAccount(SqlRowSet rowSet) {
         Account account = new Account();
         account.setAccount_id(rowSet.getInt("account_id"));
         account.setUser_id(rowSet.getLong("user_id"));
