@@ -13,12 +13,15 @@ import java.util.List;
 
 @Component
 public class JdbcTransactionDao implements TransactionDao {
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTransactionDao(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+
+
+    public JdbcTransactionDao(JdbcTemplate jdbcTemplate, AccountDao accountDao) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.accountDao = accountDao;
     }
 
     @Override
@@ -58,15 +61,14 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount) {
         BigDecimal zeroBalance = new BigDecimal("0.00");
-
-//        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
-//            System.out.println("You must transfer more than 0.00");
-//            return false;
-//        }
-//        if (accountDao.getBalance(account_id_out).compareTo(transferAmount) == -1) {
-//            System.out.println("You cannot transfer an amount greater than your balance.");
-//            return false;
-//        }
+        if (transferAmount.compareTo(zeroBalance) == -1 || transferAmount.compareTo(zeroBalance) == 0) {
+            System.out.println("You must transfer more than 0.00");
+            return false;
+        }
+        if (accountDao.getBalance(account_id_out).compareTo(transferAmount) == -1) {
+            System.out.println("You cannot transfer an amount greater than your balance.");
+            return false;
+        }
         subtractFromBalance(transferAmount, account_id_out);
         addToBalance(transferAmount, account_id_in);
         return true;
