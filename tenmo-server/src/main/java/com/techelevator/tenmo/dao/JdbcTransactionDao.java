@@ -23,7 +23,7 @@ public class JdbcTransactionDao implements TransactionDao {
 
     @Override
     public boolean subtractFromBalance(BigDecimal money, int account_id) throws IllegalArgumentException {
-        String sql = "UPDATE balance SET balance = balance - ? WHERE account_id = ?;";
+        String sql = "UPDATE balance SET balance = balance - ? WHERE account_id = ?; ";
         try {
             SqlRowSet updatedBalance = jdbcTemplate.queryForRowSet(sql, money, account_id);
         } catch (IllegalArgumentException e) {
@@ -39,7 +39,7 @@ public class JdbcTransactionDao implements TransactionDao {
 
         Account account = new Account();
 
-        String sql = "UPDATE balance SET balance = balance + ? WHERE account_id = ?;";
+        String sql = "UPDATE balance SET balance = balance + ? WHERE account_id = ?; ";
         if (account.getAccount_id() == account_id) {
             System.out.println("You cannot send money to yourself.");
             return false;
@@ -75,7 +75,7 @@ public class JdbcTransactionDao implements TransactionDao {
 
     @Override
     public  List<Transaction> allTransactions() {
-        String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting FROM transaction;";
+        String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting FROM transaction; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
         List<Transaction> transactions = new ArrayList<>();
@@ -92,7 +92,7 @@ public class JdbcTransactionDao implements TransactionDao {
         String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
                 "FROM transaction " +
                 "WHERE " +
-                "user_id = ?;";
+                "user_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, user_id);
         while (results.next()) {
             transactionsUserId.add(mapRowToTransaction(results));
@@ -105,7 +105,7 @@ public class JdbcTransactionDao implements TransactionDao {
         List<Transaction> outgoingId = new ArrayList<>();
         String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
                 "FROM transaction " +
-                "WHERE account_id_out = ?;";
+                "WHERE account_id_out = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id_out);
         while (results.next()) {
             outgoingId.add(mapRowToTransaction(results));
@@ -118,7 +118,7 @@ public class JdbcTransactionDao implements TransactionDao {
         List<Transaction> incomingId = new ArrayList<>();
         String sql = "SELECT transaction_id, account_id_in, account_id_out, transaction_amount, is_requesting " +
                 "FROM transaction " +
-                "WHERE account_id_in = ?;";
+                "WHERE account_id_in = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id_in);
         while (results.next()) {
             incomingId.add(mapRowToTransaction(results));

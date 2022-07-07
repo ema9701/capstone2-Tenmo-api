@@ -70,7 +70,7 @@ public class JdbcAccountDao implements AccountDao{
     @Override
     public List<Account> findUserIds(){
         List<Account> user_ids = new ArrayList<>();
-        String sql = "SELECT user_id FROM account;";
+        String sql = "SELECT user_id FROM account; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
         while(results.next()){
@@ -81,7 +81,7 @@ public class JdbcAccountDao implements AccountDao{
     }
     @Override
     public BigDecimal getBalance(int account_id){
-        String sql = "SELECT balance FROM account WHERE account_id = ?";
+        String sql = "SELECT balance FROM account WHERE account_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id);
         BigDecimal bigDecimal = new BigDecimal("0.00");
 

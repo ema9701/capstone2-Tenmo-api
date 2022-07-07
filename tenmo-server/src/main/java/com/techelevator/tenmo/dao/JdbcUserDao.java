@@ -63,15 +63,17 @@ public class JdbcUserDao implements UserDao {
         try {
             newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username, password_hash);
         } catch (DataAccessException e) {
+            System.out.println(e.getLocalizedMessage());
             return false;
         }
 
         // TODO: Create the account record with initial balance
-        String accountSql = "INSERT INTO account (user_id, balance) VALUES (newUserId, 1000.00) RETURNING account_id";
+        String accountSql = "INSERT INTO account (user_id, balance) VALUES (?, 1000.00) RETURNING account_id";
         Integer accountId;
         try {
-            accountId = jdbcTemplate.queryForObject(accountSql, Integer.class);
+            accountId = jdbcTemplate.queryForObject(accountSql, Integer.class, newUserId);
         } catch (DataAccessException e){
+            System.out.println(e.getLocalizedMessage());
             return false;
         }
         return true;
