@@ -30,22 +30,16 @@ public class AccountController {
     }
 
 
-
     @GetMapping(path = "/account")
-    public List<Account> list() {return accountDao.findAccounts();}
+    public List<Account> list() {
+        return accountDao.findAccounts();
+    }
 
-//    @GetMapping(path = "/account")
-//    public List<Account> findUserIds() {return accountDao.findUserIds();}
 
     @GetMapping(path = "/account/{user_id}")
-    public Account accountByUserId(@PathVariable Long user_id)  {
+    public Account accountByUserId(@PathVariable Long user_id) {
         return accountDao.findAccountByUserId(user_id);
     }
-//
-//    @PutMapping(path = "/account/{id}")
-//    public boolean subtractFromBalance(@PathVariable BigDecimal balance, int account_id) {
-//        return transactionDao.subtractFromBalance(balance, account_id);
-//    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/transaction")
@@ -54,19 +48,11 @@ public class AccountController {
     }
 
 
-//    @PreAuthorize("hasRole('USER')")
-//    @GetMapping (path = "/account/{id}")
-//    public BigDecimal getBalanceByUserId(int user_id){
-//        return accountDao.getBalanceByUserId(user_id);
-//    }
-
     @GetMapping(path = "/user")
-    public List<User>  findAll() {return userDao.findAll();}
+    public List<User> findAll() {
+        return userDao.findAll();
+    }
 
-//    @GetMapping(path = "/user/{id}")
-//    public User findByUserName(@RequestParam String username) {
-//        return userDao.findByUsername(username);
-//    }
 
     @GetMapping(path = "/user/{username}")
     public int findIdByUserName(@PathVariable String username) {
@@ -82,30 +68,12 @@ public class AccountController {
     public List<Transaction> transactionsByUserId(@PathVariable int user_id) {
         return transactionDao.transactionByUserId(user_id);
     }
-//
-//    @GetMapping(path = "/user/{id}/transaction")
-//    public List<Transaction> listOutgoingTransfers(@PathVariable  int account_id_out) {
-//        return transactionDao.listByOutgoingAccount(account_id_out);
-//    }
-//
-//    @GetMapping(path = "/user/{id}/transaction")
-//    public List<Transaction> listIncomingTransfers(@PathVariable int account_id_in) {
-////        return transactionDao.listByIncomingAccount(account_id_in);
-//    }
 
-    @GetMapping(path = "/transaction/{id}")
-    public BigDecimal getTransactionAmount(@PathVariable int transaction_id) {
+
+    @GetMapping(path = "/transaction/{transaction_id}")
+    public Transaction getTransactionAmount(@PathVariable int transaction_id) {
         return transactionDao.getTransactionAmount(transaction_id);
     }
-
-//    @GetMapping(path = "/transaction/{id}")
-//    public Boolean isApproved(@PathVariable int transaction_id) {
-//        return transactionDao.isRequesting(transaction_id);
-//    }
-
-
-
-
 
 
 }

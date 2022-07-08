@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 public class Transaction {
 
     private int transaction_id;
-    private int account_id_out;
-    private int account_id_in;
-    private BigDecimal transactionAmount;
+    private int account_out;
+    private int account_in;
+    private BigDecimal amount;
     private Boolean isRequested;
 
     public Transaction() {
@@ -22,28 +22,28 @@ public class Transaction {
         this.transaction_id = transaction_id;
     }
 
-    public int getAccount_id_out() {
-        return account_id_out;
+    public int getAccount_out() {
+        return account_out;
     }
 
-    public void setAccount_id_out(int account_id_out) {
-        this.account_id_out = account_id_out;
+    public void setAccount_out(int account_out) {
+        this.account_out = account_out;
     }
 
-    public int getAccount_id_in() {
-        return account_id_in;
+    public int getAccount_in() {
+        return account_in;
     }
 
-    public void setAccount_id_in(int account_id_in) {
-        this.account_id_in = account_id_in;
+    public void setAccount_in(int account_in) {
+        this.account_in = account_in;
     }
 
-    public BigDecimal getTransactionAmount() {
-        return transactionAmount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setTransactionAmount(BigDecimal transactionAmount) {
-        this.transactionAmount = transactionAmount;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public Boolean getRequested() {
@@ -57,9 +57,9 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction{" +
-                "account_receiving_id=" + account_id_in +
-                ", account_sending_id='" + account_id_out +
-                ", transfer_amount = " + transactionAmount +
+                "account_receiving_id=" + account_in +
+                ", account_sending_id='" + account_out +
+                ", transfer_amount = " + amount +
                 '}';
     }
 }

@@ -15,7 +15,7 @@ public interface TransactionDao {
 
     List<Transaction> listByIncomingAccount(int account_id_in);
 
-    BigDecimal getTransactionAmount(int transaction_id);
+    Transaction getTransactionAmount(int transaction_id);
 
     Boolean isRequesting(int transaction_id);
 
