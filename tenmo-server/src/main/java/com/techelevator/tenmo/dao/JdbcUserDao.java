@@ -55,7 +55,6 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean create(String username, String password) {
-
         // create user
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
@@ -78,9 +77,6 @@ public class JdbcUserDao implements UserDao {
         }
         return true;
     }
-
-
-
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();

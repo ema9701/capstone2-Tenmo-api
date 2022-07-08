@@ -9,14 +9,8 @@ public interface TransactionDao {
 
     List<Transaction> allTransactions();
 
-//    List<Transaction> transactionOutgoingByUsername(String username);
-//    List<Transaction> transactionIncomingByUsername(String username);
-//
+    List<Transaction> listUserTrans(String username);
 
-    public List<Transaction> listUserTrans(String username);
-
-
-//    List<Transaction> transactionsByUsername(String username);
     List<Transaction> listByOutgoingAccount(int account_id_out);
 
     List<Transaction> listByIncomingAccount(int account_id_in);

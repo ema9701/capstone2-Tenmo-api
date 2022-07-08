@@ -34,9 +34,6 @@ public class AccountController {
         this.transactionDao = transactionDao;
     }
 
-
-
-
     @GetMapping(path = "/account")
     public List<Account> list() {
         return accountDao.findAccounts();
@@ -49,10 +46,13 @@ public class AccountController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/transaction")
-    public void transferMoney(@RequestParam int account_id_in, @RequestParam int account_id_out, @RequestParam BigDecimal transferAmount) {
-        transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
+    public void transferMoney(@RequestParam int account_id_in, @RequestParam int account_id_out, @RequestParam BigDecimal transferAmount, Principal principal) {
+        if (accountDao.accountIdByUserName(principal.getName()) == account_id_out) {
+            transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
     }
-
 
     @GetMapping(path = "/user")
     public List<User> findAll() {
@@ -88,11 +88,11 @@ public class AccountController {
         }
         return blank;
     }
+
     @GetMapping(path = "/transaction/{transaction_id}")
     public Transaction getTransaction(@PathVariable int transaction_id) {
         return transactionDao.getTransaction(transaction_id);
     }
-
 
 
 }

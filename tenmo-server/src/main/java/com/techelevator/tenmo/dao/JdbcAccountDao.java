@@ -52,7 +52,6 @@ public class JdbcAccountDao implements AccountDao {
         return account;
     }
 
-
     @Override
     public BigDecimal getBalanceByUserId(int user_id) {
         String sql = "SELECT balance FROM account WHERE user_id = ?; ";
@@ -101,4 +100,17 @@ public class JdbcAccountDao implements AccountDao {
         account.setBalance(rowSet.getBigDecimal("balance"));
         return account;
     }
+
+    @Override
+    public int accountIdByUserName(String username) {
+        String sql = "SELECT account_id FROM account JOIN tenmo_user ON tenmo_user.user_id = account.user_id " +
+                " WHERE username = ?;";
+        Integer id = jdbcTemplate.queryForObject(sql, Integer.class, username);
+        if (id != null) {
+            return id;
+        } else {
+            return -1;
+        }
+    }
+
 }

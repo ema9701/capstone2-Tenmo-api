@@ -13,7 +13,6 @@ import java.util.List;
 @Component
 public class JdbcTransactionDao implements TransactionDao {
     private final AccountDao accountDao;
-
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcTransactionDao(AccountDao accountDao, JdbcTemplate jdbcTemplate) {
@@ -78,6 +77,9 @@ public class JdbcTransactionDao implements TransactionDao {
             return false;
         }
 
+
+
+
         transactionSave(account_id_out, account_id_in, transferAmount, false);
         subtractFromBalance(transferAmount, account_id_out);
         addToBalance(transferAmount, account_id_in);
@@ -98,7 +100,6 @@ public class JdbcTransactionDao implements TransactionDao {
         return transactions;
     }
 
-
     public List<Transaction> transactionOutgoingByUsername(String username) {
         List<Transaction> outgoingUsername = new ArrayList<>();
         String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting " +
@@ -114,7 +115,6 @@ public class JdbcTransactionDao implements TransactionDao {
         return outgoingUsername;
     }
 
-
     public List<Transaction> transactionIncomingByUsername(String username) {
         List<Transaction> incomingUsername = new ArrayList<>();
         String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting " +
@@ -129,13 +129,6 @@ public class JdbcTransactionDao implements TransactionDao {
         }
         return incomingUsername;
     }
-//    @Override
-//    public List<Transaction> transactionsByUsername(String username) {
-//
-//        transactionIncomingByUsername(username);
-//        transactionOutgoingByUsername(username);
-//
-//    }
 
     @Override
     public List<Transaction> listUserTrans(String username) {
@@ -146,29 +139,22 @@ public class JdbcTransactionDao implements TransactionDao {
                 " JOIN tenmo_user on account.user_id = tenmo_user.user_id " +
                 " WHERE " +
                 " username = ?; ";
-
         String sql2 = "SELECT transaction_id, account_out, account_in, amount, is_requesting " +
                 " FROM transactions " +
                 " JOIN account on transactions.account_out = account.account_id " +
                 " JOIN tenmo_user on account.user_id = tenmo_user.user_id " +
                 " WHERE " +
                 " username = ?; ";
-
         SqlRowSet results1 = jdbcTemplate.queryForRowSet(sql1, username);
         SqlRowSet results2 = jdbcTemplate.queryForRowSet(sql2, username);
-
         while(results1.next()) {
             transactions.add(mapRowToTransaction(results1));
-
         }
         while(results2.next()) {
             transactions.add(mapRowToTransaction(results2));
         }
         return transactions;
     }
-
-
-
 
     @Override
     public List<Transaction> listByOutgoingAccount(int account_id_out) {
@@ -199,7 +185,6 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public Transaction getTransaction(int transaction_id) {
         Transaction transaction = null;
-//        BigDecimal amount = new BigDecimal("0.00");
         String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting FROM transactions WHERE transaction_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transaction_id);
         if (results.next()) {
@@ -228,6 +213,5 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setRequested(rowSet.getBoolean("is_requesting"));
         return transaction;
     }
-
 
 }
