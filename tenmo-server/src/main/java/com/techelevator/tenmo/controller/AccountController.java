@@ -8,10 +8,15 @@ import com.techelevator.tenmo.security.model.Account;
 import com.techelevator.tenmo.security.model.Transaction;
 import com.techelevator.tenmo.security.model.User;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,6 +35,8 @@ public class AccountController {
     }
 
 
+
+
     @GetMapping(path = "/account")
     public List<Account> list() {
         return accountDao.findAccounts();
@@ -46,13 +53,14 @@ public class AccountController {
         transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
     }
 
+
     @GetMapping(path = "/user")
     public List<User> findAll() {
         return userDao.findAll();
     }
 
     @GetMapping(path = "/user/{username}")
-    public int findIdByUserName(@PathVariable String username) {
+    public int findIdByUserName(@PathVariable("username") String username) {
         return userDao.findIdByUsername(username);
     }
 
@@ -61,18 +69,25 @@ public class AccountController {
         return transactionDao.allTransactions();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(path = "/account/{account_id}/transaction")
-    public List<Transaction> transactionsByIncomingAccount(@PathVariable int account_id) {
+    public List<Transaction> transactionsByIncomingAccount(@PathVariable int account_id, Principal principal) {
         return transactionDao.listByIncomingAccount(account_id);
 
     }
 
-    @GetMapping(path = "/user/{user_id}/transaction")
-    public List<Transaction> transactionsByUserId(@PathVariable int user_id) {
-        return transactionDao.transactionByUserId(user_id);
+    @GetMapping(path = "/user/{username}/transaction")
+    public List<Transaction> transactionsByUsername(@PathVariable String username, Principal principal) throws AuthorizationServiceException {
+        List<Transaction> blank = new ArrayList<>();
+        if (username.equalsIgnoreCase(principal.getName())) {
+            try {
+                return transactionDao.listUserTrans(username);
+            } catch (AuthorizationServiceException e) {
+                e.getLocalizedMessage();
+            }
+        }
+        return blank;
     }
-
-
     @GetMapping(path = "/transaction/{transaction_id}")
     public Transaction getTransaction(@PathVariable int transaction_id) {
         return transactionDao.getTransaction(transaction_id);
