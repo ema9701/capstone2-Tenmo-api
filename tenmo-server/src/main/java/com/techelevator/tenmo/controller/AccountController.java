@@ -54,9 +54,10 @@ public class AccountController {
         }
     }
 
+
     @GetMapping(path = "/user")
-    public List<User> findAll() {
-        return userDao.findAll();
+    public List<User>  findAllSafe() {
+        return userDao.findAllSafe();
     }
 
     @GetMapping(path = "/user/{username}")

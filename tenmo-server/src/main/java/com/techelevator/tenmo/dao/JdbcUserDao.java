@@ -87,4 +87,26 @@ public class JdbcUserDao implements UserDao {
         user.setAuthorities("USER");
         return user;
     }
+
+    @Override
+    public List<User> findAllSafe() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT user_id, username FROM tenmo_user; ";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+        while(results.next()) {
+            users.add(mapRowToRestrictedUserValues(results));
+        }
+        return users;
+    }
+
+    private User mapRowToRestrictedUserValues(SqlRowSet rs) {
+        User user = new User();
+        user.setId(rs.getLong("user_id"));
+        user.setUsername(rs.getString("username"));
+        return user;
+    }
+
+
+
+
 }
