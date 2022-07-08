@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-DROP TABLE IF EXISTS tenmo_user, account, transactions, transaction_account;
+DROP TABLE IF EXISTS tenmo_user, account, transactions, transaction_status;
 
 DROP SEQUENCE IF EXISTS seq_user_id, seq_account_id;
 
@@ -34,21 +34,23 @@ CREATE TABLE account (
 );
 
 CREATE TABLE transactions (
-	transaction_id serial NOT NULL,
+	transaction_id serial NOT NULL, 
+	account_out int NOT null, 
+	account_in int NOT null,
 	amount decimal (13, 2) NOT NULL,
 	is_requesting boolean NOT NULL,
-	status varchar (10) NOT NULL DEFAULT 'True',
 	CONSTRAINT PK_transactions PRIMARY KEY (transaction_id)
 );
 
-CREATE TABLE transaction_account (
-	transaction_id serial NOT NULL,
-	account_id_out int NOT NULL,
-	account_id_in int NOT NULL,
-	CONSTRAINT PK_transaction_account PRIMARY KEY (transaction_id),
-	CONSTRAINT FK_transaction_account FOREIGN KEY (transaction_id) REFERENCES transactions (transaction_id),
-	CONSTRAINT FK_transaction_account_out FOREIGN KEY (account_id_out) REFERENCES account (account_id),
-	CONSTRAINT FK_transaction_account_in FOREIGN KEY (account_id_in) REFERENCES account (account_id)
-);
+CREATE TABLE transaction_status (
+	status_id serial NOT NULL,
+	transaction_id serial NOT NULL, 
+	status varchar (10) NOT NULL DEFAULT 'True',
+	CONSTRAINT PK_transaction_status PRIMARY KEY (status_id),
+	CONSTRAINT FK_transaction_status_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (transaction_id)
+); 
+
+ALTER TABLE transactions ADD CONSTRAINT FK_transactions_account_from FOREIGN KEY (account_in) REFERENCES account(account_id); 
+ALTER TABLE transactions ADD CONSTRAINT FK_transactions_account_to FOREIGN KEY (account_out) REFERENCES account(account_id);
 
 COMMIT;

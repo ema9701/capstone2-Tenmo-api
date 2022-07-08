@@ -7,6 +7,7 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.security.model.Account;
 import com.techelevator.tenmo.security.model.Transaction;
 import com.techelevator.tenmo.security.model.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,9 +47,10 @@ public class AccountController {
 //        return transactionDao.subtractFromBalance(balance, account_id);
 //    }
 
-    @PutMapping(path = "/transaction")
-    public boolean transferMoney(@RequestParam int account_id_in, @RequestParam int account_id_out, @RequestParam BigDecimal transferAmount) {
-        return transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "/transaction")
+    public void transferMoney(@RequestParam int account_id_in, @RequestParam int account_id_out, @RequestParam BigDecimal transferAmount) {
+        transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
     }
 
 

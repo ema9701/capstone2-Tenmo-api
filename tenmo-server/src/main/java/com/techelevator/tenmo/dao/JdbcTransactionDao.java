@@ -62,6 +62,7 @@ public class JdbcTransactionDao implements TransactionDao {
         BigDecimal zeroBalance = new BigDecimal("0.00");
         BigDecimal balance = accountDao.getBalance(account_id_out);
         Transaction transaction = new Transaction();
+
         if (account_id_in == account_id_out) {
             System.out.println("You may not send funds to yourself.");
             return false;
@@ -70,10 +71,26 @@ public class JdbcTransactionDao implements TransactionDao {
             System.out.println("You cannot transfer an amount greater than your balance.");
             return false;
         }
+
+
+        transactionSave(transferAmount);
         subtractFromBalance(transferAmount, account_id_out);
         addToBalance(transferAmount, account_id_in);
 
         return true;
+    }
+
+    public void transactionSave(BigDecimal amount) {
+
+        String sql = " INSERT INTO transactions(amount) " +
+                " VALUES(?); ";
+        jdbcTemplate.update(sql, amount);
+    }
+
+    public void transaction_account(int id, int account_id_in, int account_id_out) {
+        String sql = "INSERT INTO transaction_account(transaction_id, account_id_in, account_id_out) " +
+                "VALUES (?, ?, ?); ";
+        jdbcTemplate.update(sql, id, account_id_in, account_id_out);
     }
 
     @Override
@@ -159,7 +176,7 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setAccount_id_in(rowSet.getInt("account_id_in"));
         transaction.setAccount_id_out(rowSet.getInt("account_id_out"));
         transaction.setTransactionAmount(rowSet.getBigDecimal("transaction_amount"));
-        transaction.setRequested(rowSet.getBoolean("is_requesting"));
+//        transaction.setRequested(rowSet.getBoolean("is_requesting"));
         return transaction;
     }
 
