@@ -15,7 +15,7 @@ public interface TransactionDao {
 
     List<Transaction> listByIncomingAccount(int account_id_in);
 
-    Transaction getTransactionAmount(int transaction_id);
+    Transaction getTransaction(int transaction_id);
 
     Boolean isRequesting(int transaction_id);
 
@@ -24,6 +24,8 @@ public interface TransactionDao {
     boolean addToBalance(BigDecimal balance, int account_id) throws IllegalArgumentException;
 
     boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount);
+
+
 
 
 }

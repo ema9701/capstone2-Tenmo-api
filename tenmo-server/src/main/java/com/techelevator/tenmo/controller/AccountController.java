@@ -35,7 +35,6 @@ public class AccountController {
         return accountDao.findAccounts();
     }
 
-
     @GetMapping(path = "/account/{user_id}")
     public Account accountByUserId(@PathVariable Long user_id) {
         return accountDao.findAccountByUserId(user_id);
@@ -47,12 +46,10 @@ public class AccountController {
         transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
     }
 
-
     @GetMapping(path = "/user")
     public List<User> findAll() {
         return userDao.findAll();
     }
-
 
     @GetMapping(path = "/user/{username}")
     public int findIdByUserName(@PathVariable String username) {
@@ -64,16 +61,23 @@ public class AccountController {
         return transactionDao.allTransactions();
     }
 
-    @GetMapping(path = "/user/{id}/transaction")
+    @GetMapping(path = "/account/{account_id}/transaction")
+    public List<Transaction> transactionsByIncomingAccount(@PathVariable int account_id) {
+        return transactionDao.listByIncomingAccount(account_id);
+
+    }
+
+    @GetMapping(path = "/user/{user_id}/transaction")
     public List<Transaction> transactionsByUserId(@PathVariable int user_id) {
         return transactionDao.transactionByUserId(user_id);
     }
 
 
     @GetMapping(path = "/transaction/{transaction_id}")
-    public Transaction getTransactionAmount(@PathVariable int transaction_id) {
-        return transactionDao.getTransactionAmount(transaction_id);
+    public Transaction getTransaction(@PathVariable int transaction_id) {
+        return transactionDao.getTransaction(transaction_id);
     }
+
 
 
 }
