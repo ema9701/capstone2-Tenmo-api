@@ -12,9 +12,7 @@ public interface AccountDao {
 
     Account findAccountByUserId(Long user_id);
 
-    BigDecimal getBalanceByUserId(int user_id);
-
-    List<Account> findUserIds();
+    Account findByAccountId(int account_id);
 
     BigDecimal getBalance(int account_id);
 

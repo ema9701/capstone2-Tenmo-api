@@ -8,7 +8,8 @@ public class Transaction {
     private int account_out;
     private int account_in;
     private BigDecimal amount;
-    private Boolean isRequested;
+    private boolean isRequesting;
+
 
     public Transaction() {
 
@@ -46,13 +47,13 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Boolean getRequested() {
-        return isRequested;
+    public boolean isRequesting() {
+        return isRequesting;
+    }
+    public void setRequesting(Boolean isRequesting) {
+        this.isRequesting = isRequesting;
     }
 
-    public void setRequested(Boolean requested) {
-        isRequested = requested;
-    }
 
     @Override
     public String toString() {
