@@ -127,7 +127,7 @@ public class JdbcTransactionDao implements TransactionDao {
         return true;
     }
 
-
+    @Override
     public boolean insertTransaction(Transaction trans) {
         String newTransSql = " INSERT INTO transactions(account_out, account_in, amount, is_requesting) " +
                 " VALUES (?, ?, ?, ?) RETURNING transaction_id; ";
@@ -148,7 +148,7 @@ public class JdbcTransactionDao implements TransactionDao {
             System.out.println(e.getLocalizedMessage());
             return false;
         }
-        return true;
+        return false;
     }
 
     public boolean approveTransaction(int transaction_id) {

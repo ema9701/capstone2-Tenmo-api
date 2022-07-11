@@ -53,16 +53,17 @@ public class TransactionController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/transaction")
-    public boolean insertTransaction(@RequestBody @Valid Transaction transaction, Principal principal) {
-        if (accountDao.accountIdByUserName(principal.getName()) == transaction.getAccount_in()) {
+    public void insertTransaction(@RequestBody @Valid Transaction transaction, Principal principal) {
+        if (accountDao.accountIdByUserName(principal.getName()) == transaction.getAccount_in() ||
+                accountDao.accountIdByUserName(principal.getName()) != transaction.getAccount_out()) {
             throw new AccessDeniedException("Please select a valid recipient");
-        } else {
+        }
+        if (!transaction.isRequesting()) {
+            transactionDao.subtractFromBalance(transaction.getAmount(), transaction.getAccount_out());
+            transactionDao.addToBalance(transaction.getAmount(), transaction.getAccount_in());
             transactionDao.insertTransaction(transaction);
         }
-        return true;
     }
-
-
 }
     /*
 

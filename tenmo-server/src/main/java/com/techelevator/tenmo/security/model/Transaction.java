@@ -50,7 +50,7 @@ public class Transaction {
     public boolean isRequesting() {
         return isRequesting;
     }
-    public void setRequesting(Boolean isRequesting) {
+    public void setRequesting(boolean isRequesting) {
         this.isRequesting = isRequesting;
     }
 
