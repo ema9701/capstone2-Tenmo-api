@@ -5,6 +5,7 @@ import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransactionDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.security.model.Transaction;
+import com.techelevator.tenmo.security.model.TransactionStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,7 +74,25 @@ public class TransactionController {
         }
         return transaction;
     }
+
+    @PutMapping(path = "/transaction")
+    public TransactionStatus updateTransaction(@RequestBody @Valid TransactionStatus trans, Principal principal) {
+        Transaction pendingTrans = transactionDao.getTransaction(trans.getTransaction_id());
+        if (accountDao.accountIdByUserName(principal.getName()) == pendingTrans.getAccount_in()) {
+            throw new AccessDeniedException("You cannot approve a transaction you requested");
+        }
+        if (trans.getStatus()) {
+            transactionDao.approveTransaction(true, trans.getStatus_id(),trans.getTransaction_id());
+
+            transactionDao.subtractFromBalance(pendingTrans.getAmount(), pendingTrans.getAccount_out());
+            transactionDao.addToBalance(pendingTrans.getAmount(), pendingTrans.getAccount_in());
+        }
+        return trans;
+    }
+
 }
+
+
     /*
 
      PREVIOUS MAPPING METHODS:

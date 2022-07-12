@@ -24,6 +24,8 @@ public interface TransactionDao {
 
     boolean insertTransaction(Transaction transaction);
 
+    boolean approveTransaction(boolean status,int status_id, int transaction_id);
+
 
 
     /*

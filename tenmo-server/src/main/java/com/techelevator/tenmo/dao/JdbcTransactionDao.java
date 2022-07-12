@@ -67,7 +67,9 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean subtractFromBalance(BigDecimal money, int account_id) throws IllegalArgumentException {
         Account account = new Account();
-        String sql = "UPDATE account SET balance = balance - ? WHERE account_id = ?; ";
+        String sql = " UPDATE account SET balance = balance - ? " +
+//                " JOIN transactions ON account.account_id = transactions.account_out " +
+                " WHERE account_id = ?; ";
         if (account.getAccount_id() == account_id) {
             System.out.println("Please select a valid recipient.");
             return false;
@@ -85,7 +87,9 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean addToBalance(BigDecimal money, int account_id) throws IllegalArgumentException {
         Account account = new Account();
-        String sql = "UPDATE account SET balance = balance + ? WHERE account_id = ?; ";
+        String sql = "UPDATE account SET balance = balance + ? " +
+//                " JOIN transactions ON account.account_id = transactions.account_in " +
+                " WHERE account_id = ?; ";
         if (account.getAccount_id() == account_id) {
             System.out.println("You cannot send money to yourself.");
             return false;
@@ -140,7 +144,7 @@ public class JdbcTransactionDao implements TransactionDao {
         }
 
         String newStatusSql = "INSERT INTO transaction_status(transaction_id, status) " +
-                "VALUES (?, 'PENDING') RETURNING status_id; ";
+                "VALUES (?, DEFAULT) RETURNING status_id; ";
         Integer newStatusId;
         try {
             newStatusId = jdbcTemplate.queryForObject(newStatusSql, Integer.class, newTransactionId);
@@ -151,10 +155,41 @@ public class JdbcTransactionDao implements TransactionDao {
         return false;
     }
 
-    public boolean approveTransaction(int transaction_id) {
+
+    public boolean insertTransaction(Transaction trans, boolean isApproved) {
+        String newTransSql = " INSERT INTO transactions(account_out, account_in, amount, is_requesting) " +
+                " VALUES (?, ?, ?, ?) RETURNING transaction_id; ";
+        Integer newTransactionId;
+        try {
+            newTransactionId = jdbcTemplate.queryForObject(newTransSql, Integer.class, trans.getAccount_out(), trans.getAccount_in(), trans.getAmount(), trans.isIs_requesting());
+        } catch (ServerErrorException e) {
+            System.out.println(e.getLocalizedMessage());
+            return false;
+        }
+
+        String newStatusSql = "INSERT INTO transaction_status(transaction_id, status) " +
+                "VALUES (?, ?) RETURNING status_id; ";
+        Integer newStatusId;
+        try {
+            newStatusId = jdbcTemplate.queryForObject(newStatusSql, Integer.class, newTransactionId, isApproved);
+        } catch (DataRetrievalFailureException e) {
+            System.out.println(e.getLocalizedMessage());
+            return false;
+        }
+        return false;
+    }
+
+
+
+
+
+    @Override
+    public boolean approveTransaction(boolean status, int status_id, int transaction_id) {
         Transaction transaction = new Transaction();
-        String sql = "UPDATE transaction_status SET status = 'APPROVED' WHERE transaction_id = ?; ";
-        return true;
+        String sql = "UPDATE transaction_status SET status = ? WHERE status_id = ? AND transaction_id = ?; ";
+         jdbcTemplate.update(sql, status, status_id, transaction_id);
+         return true;
+
     }
 
 
@@ -174,7 +209,7 @@ public class JdbcTransactionDao implements TransactionDao {
         TransactionStatus status = new TransactionStatus();
         status.setStatus_id(rowSet.getInt("status_id"));
         status.setTransaction_id(rowSet.getInt("transaction_id"));
-        status.setStatus(rowSet.getString("status"));
+        status.setStatus(rowSet.getBoolean("status"));
         return status;
     }
 

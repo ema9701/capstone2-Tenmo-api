@@ -4,7 +4,7 @@ public class TransactionStatus {
 
     private int status_id;
     private int transaction_id;
-    private String status;
+    private boolean status;
 
     public TransactionStatus() {
 
@@ -26,11 +26,11 @@ public class TransactionStatus {
         this.transaction_id = transaction_id;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 }
