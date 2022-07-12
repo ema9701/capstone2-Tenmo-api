@@ -133,7 +133,7 @@ public class JdbcTransactionDao implements TransactionDao {
                 " VALUES (?, ?, ?, ?) RETURNING transaction_id; ";
         Integer newTransactionId;
         try {
-            newTransactionId = jdbcTemplate.queryForObject(newTransSql, Integer.class, trans.getAccount_out(), trans.getAccount_in(), trans.getAmount(), trans.isRequesting());
+            newTransactionId = jdbcTemplate.queryForObject(newTransSql, Integer.class, trans.getAccount_out(), trans.getAccount_in(), trans.getAmount(), trans.isIs_requesting());
         } catch (ServerErrorException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
@@ -166,7 +166,7 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setAccount_out(rowSet.getInt("account_out"));
         transaction.setAccount_in(rowSet.getInt("account_in"));
         transaction.setAmount(rowSet.getBigDecimal("amount"));
-        transaction.setRequesting(rowSet.getBoolean("is_requesting"));
+        transaction.setIs_requesting(rowSet.getBoolean("is_requesting"));
         return transaction;
     }
 

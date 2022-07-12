@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +31,12 @@ public class TransactionController {
     }
 
 
-    @GetMapping(path = "/transaction/{transaction_id}")
+    @GetMapping(path = "/transaction/id/{transaction_id}")
     public Transaction getTransaction(@PathVariable int transaction_id) {
         return transactionDao.getTransaction(transaction_id);
     }
 
-    @GetMapping(path = "/transaction/{username}")
+    @GetMapping(path = "/transaction/username/{username}")
     public List<Transaction> transactionsByUsername(@PathVariable String username, Principal principal) {
         List<Transaction> blank = new ArrayList<>();
         if (username.equalsIgnoreCase(principal.getName())) {
@@ -53,16 +52,26 @@ public class TransactionController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/transaction")
-    public void insertTransaction(@RequestBody @Valid Transaction transaction, Principal principal) {
-        if (accountDao.accountIdByUserName(principal.getName()) == transaction.getAccount_in() ||
-                accountDao.accountIdByUserName(principal.getName()) != transaction.getAccount_out()) {
-            throw new AccessDeniedException("Please select a valid recipient");
+    public Transaction insertTransaction(@RequestBody @Valid Transaction transaction, Principal principal) {
+
+        if (!transaction.isIs_requesting()) {
+
+            if (accountDao.accountIdByUserName(principal.getName()) == transaction.getAccount_in() ||
+                    accountDao.accountIdByUserName(principal.getName()) != transaction.getAccount_out()) {
+                throw new AccessDeniedException("Please select a valid recipient");
+            } else {
+                transactionDao.subtractFromBalance(transaction.getAmount(), transaction.getAccount_out());
+                transactionDao.addToBalance(transaction.getAmount(), transaction.getAccount_in());
+                transactionDao.insertTransaction(transaction);
+            }
         }
-        if (!transaction.isRequesting()) {
-            transactionDao.subtractFromBalance(transaction.getAmount(), transaction.getAccount_out());
-            transactionDao.addToBalance(transaction.getAmount(), transaction.getAccount_in());
-            transactionDao.insertTransaction(transaction);
+        if (transaction.isIs_requesting()) {
+            if (accountDao.accountIdByUserName(principal.getName()) == transaction.getAccount_in() &&
+                    accountDao.accountIdByUserName(principal.getName()) != transaction.getAccount_out()) {
+                transactionDao.insertTransaction(transaction);
+            }
         }
+        return transaction;
     }
 }
     /*

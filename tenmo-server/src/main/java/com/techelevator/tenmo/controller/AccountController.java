@@ -39,7 +39,7 @@ public class AccountController {
         return accountDao.findAccounts();
     }
 
-    @GetMapping(path = "/account/{user_id}")
+    @GetMapping(path = "/account/user/{user_id}")
     public Account accountByUserId(@PathVariable Long user_id) {
         return accountDao.findAccountByUserId(user_id);
     }

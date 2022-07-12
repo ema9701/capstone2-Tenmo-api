@@ -8,7 +8,7 @@ public class Transaction {
     private int account_out;
     private int account_in;
     private BigDecimal amount;
-    private boolean isRequesting;
+    private boolean is_requesting;
 
 
     public Transaction() {
@@ -47,11 +47,11 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public boolean isRequesting() {
-        return isRequesting;
+    public boolean isIs_requesting() {
+        return is_requesting;
     }
-    public void setRequesting(boolean isRequesting) {
-        this.isRequesting = isRequesting;
+    public void setIs_requesting(boolean isRequesting) {
+        this.is_requesting = isRequesting;
     }
 
 
