@@ -1,10 +1,16 @@
 package com.techelevator.tenmo.security.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class TransactionStatus {
 
     private int status_id;
     private int transaction_id;
     private boolean status;
+    private boolean checked;
+    private LocalDate timeStamp;
+
 
     public TransactionStatus() {
 
@@ -33,4 +39,22 @@ public class TransactionStatus {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public LocalDate getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDate timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }
+
+

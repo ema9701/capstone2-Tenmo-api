@@ -16,8 +16,7 @@ CREATE TABLE tenmo_user (
 	password_hash varchar(200) NOT NULL,
 	CONSTRAINT PK_tenmo_user PRIMARY KEY (user_id),
 	CONSTRAINT UQ_username UNIQUE (username)
-);
-
+); 
 -- Sequence to start account_id values at 2001 instead of 1
 -- Note: Use similar sequences with unique starting values for additional tables
 CREATE SEQUENCE seq_account_id
@@ -45,7 +44,8 @@ CREATE TABLE transactions (
 CREATE TABLE transaction_status (
 	status_id serial NOT NULL,
 	transaction_id serial NOT NULL, 
-	status varchar (10) NOT NULL DEFAULT 'True',
+	status boolean DEFAULT null,
+	checked boolean DEFAULT false,
 	CONSTRAINT PK_transaction_status PRIMARY KEY (status_id),
 	CONSTRAINT FK_transaction_status_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (transaction_id)
 ); 

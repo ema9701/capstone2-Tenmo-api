@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerErrorException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,8 +144,8 @@ public class JdbcTransactionDao implements TransactionDao {
             return false;
         }
 
-        String newStatusSql = "INSERT INTO transaction_status(transaction_id, status) " +
-                "VALUES (?, DEFAULT) RETURNING status_id; ";
+        String newStatusSql = "INSERT INTO transaction_status(transaction_id, status, checked) " +
+                "VALUES (?, DEFAULT, DEFAULT) RETURNING status_id; ";
         Integer newStatusId;
         try {
             newStatusId = jdbcTemplate.queryForObject(newStatusSql, Integer.class, newTransactionId);
@@ -186,7 +187,7 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean approveTransaction(boolean status, int status_id, int transaction_id) {
         Transaction transaction = new Transaction();
-        String sql = "UPDATE transaction_status SET status = ? WHERE status_id = ? AND transaction_id = ?; ";
+        String sql = "UPDATE transaction_status SET status = ?, checked = 'true' WHERE status_id = ? AND transaction_id = ?; ";
          jdbcTemplate.update(sql, status, status_id, transaction_id);
          return true;
 
@@ -210,6 +211,11 @@ public class JdbcTransactionDao implements TransactionDao {
         status.setStatus_id(rowSet.getInt("status_id"));
         status.setTransaction_id(rowSet.getInt("transaction_id"));
         status.setStatus(rowSet.getBoolean("status"));
+        if (rowSet.getDate("time_stamp") != null) {
+            status.setTimeStamp(rowSet.getDate("time_stamp").toLocalDate());
+        } else {
+            status.setTimeStamp(null);
+        }
         return status;
     }
 

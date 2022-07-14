@@ -8,10 +8,12 @@ import com.techelevator.tenmo.security.model.Transaction;
 import com.techelevator.tenmo.security.model.TransactionStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +58,11 @@ public class TransactionController {
     public Transaction insertTransaction(@RequestBody @Valid Transaction transaction, Principal principal) {
 
         if (!transaction.isIs_requesting()) {
-
             if (accountDao.accountIdByUserName(principal.getName()) == transaction.getAccount_in() ||
                     accountDao.accountIdByUserName(principal.getName()) != transaction.getAccount_out()) {
                 throw new AccessDeniedException("Please select a valid recipient");
+            } else if (accountDao.getBalance(transaction.getAccount_out()).compareTo(transaction.getAmount()) == -1) {
+                throw new ArithmeticException("You cannot send more money than you have.");
             } else {
                 transactionDao.subtractFromBalance(transaction.getAmount(), transaction.getAccount_out());
                 transactionDao.addToBalance(transaction.getAmount(), transaction.getAccount_in());
@@ -80,16 +83,20 @@ public class TransactionController {
         Transaction pendingTrans = transactionDao.getTransaction(trans.getTransaction_id());
         if (accountDao.accountIdByUserName(principal.getName()) == pendingTrans.getAccount_in()) {
             throw new AccessDeniedException("You cannot approve a transaction you requested");
+        } else if (accountDao.getBalance(pendingTrans.getAccount_out()).compareTo(pendingTrans.getAmount()) == -1) {
+            throw new ArithmeticException("You cannot send more money than you have.");
         }
-        if (trans.getStatus()) {
-            transactionDao.approveTransaction(true, trans.getStatus_id(),trans.getTransaction_id());
+
+        if (trans.isChecked()) {
+            throw new AuthorizationServiceException("You cannot re-approve a previously approved transfer request");
+        } else {
+            transactionDao.approveTransaction(true, trans.getStatus_id(), trans.getTransaction_id());
 
             transactionDao.subtractFromBalance(pendingTrans.getAmount(), pendingTrans.getAccount_out());
             transactionDao.addToBalance(pendingTrans.getAmount(), pendingTrans.getAccount_in());
+            return trans;
         }
-        return trans;
     }
-
 }
 
 
