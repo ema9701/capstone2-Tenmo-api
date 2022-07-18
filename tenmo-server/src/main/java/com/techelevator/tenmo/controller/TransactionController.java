@@ -91,7 +91,6 @@ public class TransactionController {
             throw new AuthorizationServiceException("You cannot re-approve a previously approved transfer request");
         } else {
             transactionDao.approveTransaction(true, trans.getStatus_id(), trans.getTransaction_id());
-
             transactionDao.subtractFromBalance(pendingTrans.getAmount(), pendingTrans.getAccount_out());
             transactionDao.addToBalance(pendingTrans.getAmount(), pendingTrans.getAccount_in());
             return trans;
