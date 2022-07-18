@@ -1,18 +1,12 @@
 package com.techelevator.tenmo.dao;
 
 
-import com.techelevator.tenmo.security.model.Account;
-import com.techelevator.tenmo.security.model.User;
-import org.aopalliance.intercept.Invocation;
-import org.springframework.boot.autoconfigure.quartz.QuartzProperties;
+import com.techelevator.tenmo.model.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
-import javax.security.auth.login.AccountNotFoundException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 

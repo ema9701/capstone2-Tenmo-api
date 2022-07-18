@@ -1,4 +1,4 @@
-package com.techelevator.tenmo.security.model;
+package com.techelevator.tenmo.model;
 
 import java.util.HashSet;
 import java.util.Objects;

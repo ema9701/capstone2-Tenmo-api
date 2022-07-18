@@ -4,8 +4,8 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransactionDao;
 import com.techelevator.tenmo.dao.UserDao;
-import com.techelevator.tenmo.security.model.Transaction;
-import com.techelevator.tenmo.security.model.TransactionStatus;
+import com.techelevator.tenmo.model.Transaction;
+import com.techelevator.tenmo.model.TransactionStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -13,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.List;
 
 @RestController
 @PreAuthorize("isAuthenticated()")
+@RequestMapping("/transaction")
 public class TransactionController {
 
     private AccountDao accountDao;
@@ -34,12 +34,12 @@ public class TransactionController {
     }
 
 
-    @GetMapping(path = "/transaction/id/{transaction_id}")
+    @GetMapping(path = "/{transaction_id}")
     public Transaction getTransaction(@PathVariable int transaction_id) {
         return transactionDao.getTransaction(transaction_id);
     }
 
-    @GetMapping(path = "/transaction/username/{username}")
+    @GetMapping(path = "/{username}")
     public List<Transaction> transactionsByUsername(@PathVariable String username, Principal principal) {
         List<Transaction> blank = new ArrayList<>();
         if (username.equalsIgnoreCase(principal.getName())) {
@@ -53,8 +53,10 @@ public class TransactionController {
     }
 
 
+
+
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/transaction")
+    @PostMapping(path = "")
     public Transaction insertTransaction(@RequestBody @Valid Transaction transaction, Principal principal) {
 
         if (!transaction.isIs_requesting()) {
@@ -78,7 +80,7 @@ public class TransactionController {
         return transaction;
     }
 
-    @PutMapping(path = "/transaction")
+    @PutMapping(path = "")
     public TransactionStatus updateTransaction(@RequestBody @Valid TransactionStatus trans, Principal principal) {
         Transaction pendingTrans = transactionDao.getTransaction(trans.getTransaction_id());
         if (accountDao.accountIdByUserName(principal.getName()) == pendingTrans.getAccount_in()) {
