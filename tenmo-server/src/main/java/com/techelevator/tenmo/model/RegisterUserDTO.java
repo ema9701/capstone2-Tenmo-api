@@ -1,4 +1,4 @@
-package com.techelevator.tenmo.security.model;
+package com.techelevator.tenmo.model;
 
 import javax.validation.constraints.NotEmpty;
 

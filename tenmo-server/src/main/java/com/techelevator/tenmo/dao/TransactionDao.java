@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.dao;
 
-import com.techelevator.tenmo.security.model.Transaction;
-import com.techelevator.tenmo.security.model.TransactionStatus;
+import com.techelevator.tenmo.model.Transaction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,17 +24,5 @@ public interface TransactionDao {
     boolean insertTransaction(Transaction transaction);
 
     boolean approveTransaction(boolean status,int status_id, int transaction_id);
-
-
-
-    /*
-
-    List<Transaction> listByOutgoingAccount(int account_id_out);
-    List<Transaction> listByIncomingAccount(int account_id_in);
-    List<Transaction> allTransactions();
-
-     */
-
-
 
 }

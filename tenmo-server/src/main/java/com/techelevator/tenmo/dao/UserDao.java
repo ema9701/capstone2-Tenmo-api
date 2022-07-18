@@ -1,6 +1,6 @@
 package com.techelevator.tenmo.dao;
 
-import com.techelevator.tenmo.security.model.User;
+import com.techelevator.tenmo.model.User;
 
 import java.util.List;
 

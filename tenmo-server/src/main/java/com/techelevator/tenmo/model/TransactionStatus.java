@@ -1,4 +1,4 @@
-package com.techelevator.tenmo.security.model;
+package com.techelevator.tenmo.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

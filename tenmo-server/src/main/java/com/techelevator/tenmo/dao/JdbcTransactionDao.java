@@ -1,8 +1,8 @@
 package com.techelevator.tenmo.dao;
 
-import com.techelevator.tenmo.security.model.Account;
-import com.techelevator.tenmo.security.model.Transaction;
-import com.techelevator.tenmo.security.model.TransactionStatus;
+import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Transaction;
+import com.techelevator.tenmo.model.TransactionStatus;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerErrorException;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,8 +143,8 @@ public class JdbcTransactionDao implements TransactionDao {
             return false;
         }
 
-        String newStatusSql = "INSERT INTO transaction_status(transaction_id, status, checked) " +
-                "VALUES (?, DEFAULT, DEFAULT) RETURNING status_id; ";
+        String newStatusSql = "INSERT INTO transaction_status(transaction_id, status) " +
+                "VALUES (?, DEFAULT) RETURNING status_id; ";
         Integer newStatusId;
         try {
             newStatusId = jdbcTemplate.queryForObject(newStatusSql, Integer.class, newTransactionId);
@@ -187,13 +186,11 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public boolean approveTransaction(boolean status, int status_id, int transaction_id) {
         Transaction transaction = new Transaction();
-        String sql = "UPDATE transaction_status SET status = ?, checked = 'true' WHERE status_id = ? AND transaction_id = ?; ";
+        String sql = "UPDATE transaction_status SET status = ? WHERE status_id = ? AND transaction_id = ?; ";
          jdbcTemplate.update(sql, status, status_id, transaction_id);
          return true;
 
     }
-
-
 
 
     private Transaction mapRowToTransaction(SqlRowSet rowSet) {
@@ -218,94 +215,4 @@ public class JdbcTransactionDao implements TransactionDao {
         }
         return status;
     }
-
-    /*
-
-        @Override
-    public List<Transaction> allTransactions() {
-        String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting FROM transactions; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-
-        List<Transaction> transactions = new ArrayList<>();
-
-        while (results.next()) {
-            transactions.add(mapRowToTransaction(results));
-        }
-        return transactions;
-    }
-
-        @Override
-    public List<Transaction> listByOutgoingAccount(int account_id_out) {
-        List<Transaction> outgoingId = new ArrayList<>();
-        String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting " +
-                "FROM transactions " +
-                "WHERE account_out = ?; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id_out);
-        while (results.next()) {
-            outgoingId.add(mapRowToTransaction(results));
-        }
-        return outgoingId;
-    }
-
-    @Override
-    public List<Transaction> listByIncomingAccount(int account_id_in) {
-        List<Transaction> incomingId = new ArrayList<>();
-        String sql = "SELECT transaction_id, account_out , account_in, amount, is_requesting " +
-                "FROM transactions " +
-                "WHERE account_in = ?; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id_in);
-        while (results.next()) {
-            incomingId.add(mapRowToTransaction(results));
-        }
-        return incomingId;
-    }
-
-     public List<Transaction> transactionOutgoingByUsername(String username) {
-        List<Transaction> outgoingUsername = new ArrayList<>();
-        String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting " +
-                "FROM transactions " +
-                "JOIN account on transactions.account_out = account.account_id " +
-                "JOIN tenmo_user on account.user_id = tenmo_user.user_id " +
-                "WHERE " +
-                "username = ?; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
-        while (results.next()) {
-            outgoingUsername.add(mapRowToTransaction(results));
-        }
-        return outgoingUsername;
-    }
-
-    public List<Transaction> transactionIncomingByUsername(String username) {
-        List<Transaction> incomingUsername = new ArrayList<>();
-        String sql = "SELECT transaction_id, account_out, account_in, amount, is_requesting " +
-                "FROM transactions " +
-                "JOIN account on transactions.account_in = account.account_id " +
-                "JOIN tenmo_user on account.user_id = tenmo_user.user_id " +
-                "WHERE " +
-                "username = ?; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
-        while (results.next()) {
-            incomingUsername.add(mapRowToTransaction(results));
-        }
-        return incomingUsername;
-    }
-
-     @Override
-    public boolean isRequesting(int transaction_id) {
-        Transaction transaction = new Transaction();
-        String sql = "SELECT is_requesting FROM transactions WHERE transaction_id = ?; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transaction_id);
-        if (results.next()) {
-            transaction = mapRowToTransaction(results);
-        }
-        return transaction.getRequested();
-
-    }
-
-
-    */
-
-
-
-
 }
