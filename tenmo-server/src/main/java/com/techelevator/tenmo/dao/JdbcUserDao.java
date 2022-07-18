@@ -36,7 +36,7 @@ public class JdbcUserDao implements UserDao {
         List<User> users = new ArrayList<>();
         String sql = "SELECT user_id, username, password_hash FROM tenmo_user;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-        while(results.next()) {
+        while (results.next()) {
             User user = mapRowToUser(results);
             users.add(user);
         }
@@ -47,7 +47,7 @@ public class JdbcUserDao implements UserDao {
     public User findByUsername(String username) throws UsernameNotFoundException {
         String sql = "SELECT user_id, username, password_hash FROM tenmo_user WHERE username ILIKE ?;";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, username);
-        if (rowSet.next()){
+        if (rowSet.next()) {
             return mapRowToUser(rowSet);
         }
         throw new UsernameNotFoundException("User " + username + " was not found.");
@@ -71,7 +71,7 @@ public class JdbcUserDao implements UserDao {
         Integer accountId;
         try {
             accountId = jdbcTemplate.queryForObject(accountSql, Integer.class, newUserId);
-        } catch (DataAccessException e){
+        } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
         }
@@ -82,12 +82,11 @@ public class JdbcUserDao implements UserDao {
     public List<User> findAllSafe() {
         List<User> users = new ArrayList<>();
 
-
         String sql = "SELECT user_id, username FROM tenmo_user; ";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
-        while(results.next()) {
+        while (results.next()) {
             User user = mapRowToUserRestricted(results);
             users.add(user);
         }
