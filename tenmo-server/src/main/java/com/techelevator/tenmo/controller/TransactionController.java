@@ -9,6 +9,7 @@ import com.techelevator.tenmo.model.TransactionStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -68,7 +69,10 @@ public class TransactionController {
                 throw new AccessDeniedException("Please select a valid recipient");
             } else if (accountDao.getBalance(transaction.getAccount_out()).compareTo(transaction.getAmount()) == -1) {
                 throw new ArithmeticException("You cannot send more money than you have.");
-            } else {
+            } else if (accountDao.findByAccountId(transaction.getAccount_in()) == null) {
+                throw new UsernameNotFoundException("Please select a valid user");
+            }
+            else {
                 transactionDao.subtractFromBalance(transaction.getAmount(), transaction.getAccount_out());
                 transactionDao.addToBalance(transaction.getAmount(), transaction.getAccount_in());
                 transactionDao.insertTransaction(transaction);
