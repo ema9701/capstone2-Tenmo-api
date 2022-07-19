@@ -1,15 +1,14 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transaction;
+import com.techelevator.tenmo.model.TransactionStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransactionDao {
 
-
-
-    List<Transaction> listUserTrans(String username);
+    List<Transaction> listTransactions(String username);
 
     Transaction getTransaction(int transaction_id);
 
@@ -17,12 +16,10 @@ public interface TransactionDao {
 
     boolean addToBalance(BigDecimal balance, int account_id) throws IllegalArgumentException;
 
-    void transactionPost(int account_out, int account_in, BigDecimal amount, boolean is_Requested);
-
-    boolean transferMoney(int account_id_in, int account_id_out, BigDecimal transferAmount);
-
     boolean insertTransaction(Transaction transaction);
 
-    boolean approveTransaction(boolean status,int status_id, int transaction_id);
+    boolean approveOrDenyTransaction(boolean status, int status_id, int transaction_id);
+
+    TransactionStatus getStatusByTransactionId(int transaction_id);
 
 }

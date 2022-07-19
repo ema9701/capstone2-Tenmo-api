@@ -8,8 +8,6 @@ public class TransactionStatus {
     private int status_id;
     private int transaction_id;
     private boolean status;
-    private boolean checked;
-    private LocalDate timeStamp;
 
 
     public TransactionStatus() {
@@ -40,21 +38,6 @@ public class TransactionStatus {
         this.status = status;
     }
 
-    public boolean isChecked() {
-        return checked;
-    }
-
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
-    public LocalDate getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(LocalDate timeStamp) {
-        this.timeStamp = timeStamp;
-    }
 }
 
 

@@ -8,7 +8,6 @@ import com.techelevator.tenmo.model.Transaction;
 import com.techelevator.tenmo.model.TransactionStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,12 +38,12 @@ public class TransactionController {
         return transactionDao.getTransaction(transaction_id);
     }
 
-    @GetMapping(path = "/{username}")
+    @GetMapping(path = "/user/{username}")
     public List<Transaction> transactionsByUsername(@PathVariable String username, Principal principal) {
         List<Transaction> blank = new ArrayList<>();
         if (username.equalsIgnoreCase(principal.getName())) {
             try {
-                return transactionDao.listUserTrans(username);
+                return transactionDao.listTransactions(username);
             } catch (AccessDeniedException e) {
                 e.getLocalizedMessage();
             }
@@ -52,6 +51,10 @@ public class TransactionController {
         return blank;
     }
 
+    @GetMapping(path = "/status/{transaction_id}")
+    public TransactionStatus getStatusByTransactionId(@PathVariable int transaction_id) {
+        return transactionDao.getStatusByTransactionId(transaction_id);
+    }
 
 
 
@@ -81,64 +84,32 @@ public class TransactionController {
     }
 
     @PutMapping(path = "")
-    public TransactionStatus updateTransaction(@RequestBody @Valid TransactionStatus trans, Principal principal) {
-        Transaction pendingTrans = transactionDao.getTransaction(trans.getTransaction_id());
-        if (accountDao.accountIdByUserName(principal.getName()) == pendingTrans.getAccount_in()) {
+    public TransactionStatus updateTransaction(@RequestBody @Valid TransactionStatus status, Principal principal) {
+        Transaction pending = transactionDao.getTransaction(status.getTransaction_id());
+        if (accountDao.accountIdByUserName(principal.getName()) == pending.getAccount_in()) {
             throw new AccessDeniedException("You cannot approve a transaction you requested");
-        } else if (accountDao.getBalance(pendingTrans.getAccount_out()).compareTo(pendingTrans.getAmount()) == -1) {
+        } else if (accountDao.getBalance(pending.getAccount_out()).compareTo(pending.getAmount()) == -1) {
             throw new ArithmeticException("You cannot send more money than you have.");
         }
-
-        if (trans.isChecked()) {
-            throw new AuthorizationServiceException("You cannot re-approve a previously approved transfer request");
+        if (!status.getStatus()) {
+            transactionDao.approveOrDenyTransaction(false, status.getStatus_id(), status.getTransaction_id());
         } else {
+<<<<<<< HEAD
             transactionDao.approveTransaction(true, trans.getStatus_id(), trans.getTransaction_id());
             transactionDao.subtractFromBalance(pendingTrans.getAmount(), pendingTrans.getAccount_out());
             transactionDao.addToBalance(pendingTrans.getAmount(), pendingTrans.getAccount_in());
             return trans;
+=======
+            transactionDao.approveOrDenyTransaction(true, status.getStatus_id(), status.getTransaction_id());
+            transactionDao.subtractFromBalance(pending.getAmount(), pending.getAccount_out());
+            transactionDao.addToBalance(pending.getAmount(), pending.getAccount_in());
+            return status;
+>>>>>>> 3c0bfc44f219e8b0652a2cdc3f46c6148ae63868
         }
+        return status;
     }
 }
 
 
-    /*
 
-     PREVIOUS MAPPING METHODS:
-
-    @GetMapping(path = "/transaction")
-    public List<Transaction> allTransactions() {
-        return transactionDao.allTransactions();
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping(path = "/account/{account_id}/transaction")
-    public List<Transaction> transactionsByIncomingAccount(@PathVariable int account_id, Principal principal) {
-        return transactionDao.listByIncomingAccount(account_id);
-
-    }
-
-    @GetMapping(path = "/user/{username}/transaction")
-    public List<Transaction> transactionsByUsername(@PathVariable String username, Principal principal) {
-        List<Transaction> blank = new ArrayList<>();
-        if (username.equalsIgnoreCase(principal.getName())) {
-            try {
-                return transactionDao.listUserTrans(username);
-            } catch (AccessDeniedException e) {
-                e.getLocalizedMessage();
-            }
-        }
-        return blank;
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/transaction")
-    public void transferMoney(@RequestParam int account_id_in, @RequestParam int account_id_out, @RequestParam BigDecimal transferAmount, Principal principal) {
-        if (accountDao.accountIdByUserName(principal.getName()) == account_id_out) {
-            transactionDao.transferMoney(account_id_in, account_id_out, transferAmount);
-        } else {
-            throw new AccessDeniedException("Access denied");
-        }
-    }
-
-     */
 
