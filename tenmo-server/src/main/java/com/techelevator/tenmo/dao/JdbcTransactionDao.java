@@ -3,6 +3,7 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transaction;
 import com.techelevator.tenmo.model.TransactionStatus;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -110,7 +111,7 @@ public class JdbcTransactionDao implements TransactionDao {
         try {
             newTransactionId = jdbcTemplate.queryForObject(newTransSql, Integer.class,
                     transaction.getAccount_out(), transaction.getAccount_in(), transaction.getAmount(), transaction.isIs_requesting());
-        } catch (ServerErrorException e) {
+        } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
         }
@@ -119,7 +120,7 @@ public class JdbcTransactionDao implements TransactionDao {
         Integer newStatusId;
         try {
             newStatusId = jdbcTemplate.queryForObject(newStatusSql, Integer.class, newTransactionId);
-        } catch (DataRetrievalFailureException e) {
+        } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
         }

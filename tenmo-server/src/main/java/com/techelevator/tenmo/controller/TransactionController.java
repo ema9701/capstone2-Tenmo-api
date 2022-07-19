@@ -38,7 +38,7 @@ public class TransactionController {
         return transactionDao.getTransaction(transaction_id);
     }
 
-    @GetMapping(path = "/{username}")
+    @GetMapping(path = "/user/{username}")
     public List<Transaction> transactionsByUsername(@PathVariable String username, Principal principal) {
         List<Transaction> blank = new ArrayList<>();
         if (username.equalsIgnoreCase(principal.getName())) {
@@ -51,7 +51,7 @@ public class TransactionController {
         return blank;
     }
 
-    @GetMapping(path = "/status")
+    @GetMapping(path = "/status/{transaction_id}")
     public TransactionStatus getStatusByTransactionId(@PathVariable int transaction_id) {
         return transactionDao.getStatusByTransactionId(transaction_id);
     }

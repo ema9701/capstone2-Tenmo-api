@@ -30,7 +30,6 @@ public class UserController {
         return userDao.findAllSafe();
     }
 
-
     @GetMapping(path = "/id/{username}")
     public int findIdByUserName(@PathVariable("username") String username) {
         return userDao.findIdByUsername(username);
