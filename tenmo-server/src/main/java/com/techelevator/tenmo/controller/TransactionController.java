@@ -94,17 +94,10 @@ public class TransactionController {
         if (!status.getStatus()) {
             transactionDao.approveOrDenyTransaction(false, status.getStatus_id(), status.getTransaction_id());
         } else {
-<<<<<<< HEAD
-            transactionDao.approveTransaction(true, trans.getStatus_id(), trans.getTransaction_id());
-            transactionDao.subtractFromBalance(pendingTrans.getAmount(), pendingTrans.getAccount_out());
-            transactionDao.addToBalance(pendingTrans.getAmount(), pendingTrans.getAccount_in());
-            return trans;
-=======
             transactionDao.approveOrDenyTransaction(true, status.getStatus_id(), status.getTransaction_id());
             transactionDao.subtractFromBalance(pending.getAmount(), pending.getAccount_out());
             transactionDao.addToBalance(pending.getAmount(), pending.getAccount_in());
             return status;
->>>>>>> 3c0bfc44f219e8b0652a2cdc3f46c6148ae63868
         }
         return status;
     }
