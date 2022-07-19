@@ -45,7 +45,6 @@ CREATE TABLE transaction_status (
 	status_id serial NOT NULL,
 	transaction_id serial NOT NULL, 
 	status boolean DEFAULT null,
-	checked boolean DEFAULT false,
 	CONSTRAINT PK_transaction_status PRIMARY KEY (status_id),
 	CONSTRAINT FK_transaction_status_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (transaction_id)
 ); 
