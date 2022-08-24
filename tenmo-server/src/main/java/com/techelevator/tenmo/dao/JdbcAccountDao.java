@@ -1,14 +1,12 @@
 package com.techelevator.tenmo.dao;
-
-
 import com.techelevator.tenmo.model.Account;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Component
 public class JdbcAccountDao implements AccountDao {
@@ -19,19 +17,7 @@ public class JdbcAccountDao implements AccountDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    @Override
-    public List<Account> findAccounts() {
-        List<Account> account = new ArrayList();
-
-        String sql = "SELECT user_id, account_id, balance FROM account;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-
-        while (results.next()) {
-            Account accountSql = mapRowToAccount(results);
-            account.add(accountSql);
-        }
-        return account;
-    }
+  
 
     @Override
     public Account findByAccountId(int account_id) {
@@ -61,23 +47,9 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public BigDecimal getBalance(int account_id) {
-        String sql = "SELECT balance FROM account WHERE account_id = ?; ";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, account_id);
-        BigDecimal balance = new BigDecimal("0.00");
-
-        if (results.next()) {
-            balance = results.getBigDecimal("balance");
-        } else {
-            return balance;
-        }
-        return balance;
-    }
-
-    @Override
     public int accountIdByUserName(String username) {
-        String sql = "SELECT account_id FROM account JOIN tenmo_user ON tenmo_user.user_id = account.user_id " +
-                " WHERE username = ?;";
+        String sql = "SELECT account_id FROM account JOIN tenmo_user ON account.user_id = tenmo_user.user_id " +
+                " WHERE username ILIKE ?;";
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, username);
         if (id != null) {
             return id;
@@ -86,6 +58,35 @@ public class JdbcAccountDao implements AccountDao {
         }
     }
 
+    @Override
+    public boolean withdrawAmount(BigDecimal amount, int account_id) {
+        if (!sufficientFunds(amount, account_id)) {
+            throw new ArithmeticException("Insufficient funds for transfer.");
+        } else {
+        String sql = " UPDATE account SET balance = balance - ? " +
+                " WHERE account_id = ?; ";
+            
+            return  (jdbcTemplate.update(sql, amount, account_id) == 1); 
+            }
+        }
+    
+    @Override
+    public boolean depositAmount(BigDecimal amount, int account_id) { 
+        String sql = "UPDATE account SET balance = balance + ? " +
+                " WHERE account_id = ?; ";
+           
+            return  (jdbcTemplate.update(sql, amount, account_id) == 1);
+        }
+
+    @Override 
+    public boolean sufficientFunds(BigDecimal amount, int account_id) {
+        Account account = findByAccountId(account_id);
+        BigDecimal balance = account.getBalance();
+        BigDecimal zero = new BigDecimal("0.00");
+        
+        return balance.compareTo(amount) == 1 && amount.compareTo(zero) == 1; 
+    }
+        
     private Account mapRowToAccount(SqlRowSet rowSet) {
         Account account = new Account();
         account.setAccount_id(rowSet.getInt("account_id"));

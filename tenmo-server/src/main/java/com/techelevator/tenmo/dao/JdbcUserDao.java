@@ -9,7 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JdbcUserDao implements UserDao {
@@ -21,6 +23,23 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
+    public List<User> listAll() {
+        List<User> users = new ArrayList<>();
+
+        String sql = "SELECT user_id, username FROM tenmo_user; ";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+
+        while (results.next()) {
+            User user = new User(); 
+            user.setId(results.getLong("user_id"));
+            user.setUsername(results.getString("username"));   
+            users.add(user);  
+        } 
+        return users;
+    }
+
+    @Override
     public int findIdByUsername(String username) {
         String sql = "SELECT user_id FROM tenmo_user WHERE username ILIKE ?;";
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, username);
@@ -29,18 +48,6 @@ public class JdbcUserDao implements UserDao {
         } else {
             return -1;
         }
-    }
-
-    @Override
-    public List<User> findAll() {
-        List<User> users = new ArrayList<>();
-        String sql = "SELECT user_id, username, password_hash FROM tenmo_user;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-        while (results.next()) {
-            User user = mapRowToUser(results);
-            users.add(user);
-        }
-        return users;
     }
 
     @Override
@@ -66,7 +73,7 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
 
-        // TODO: Create the account record with initial balance
+        
         String accountSql = "INSERT INTO account (user_id, balance) VALUES (?, 1000.00) RETURNING account_id";
         Integer accountId;
         try {
@@ -76,28 +83,6 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public List<User> findAllSafe() {
-        List<User> users = new ArrayList<>();
-
-        String sql = "SELECT user_id, username FROM tenmo_user; ";
-
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-
-        while (results.next()) {
-            User user = mapRowToUserRestricted(results);
-            users.add(user);
-        }
-        return users;
-    }
-
-    private User mapRowToUserRestricted(SqlRowSet rs) {
-        User user = new User();
-        user.setId(rs.getLong("user_id"));
-        user.setUsername(rs.getString("username"));
-        return user;
     }
 
 

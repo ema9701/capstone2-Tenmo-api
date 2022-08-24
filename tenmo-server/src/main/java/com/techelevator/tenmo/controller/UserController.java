@@ -1,7 +1,4 @@
 package com.techelevator.tenmo.controller;
-
-import com.techelevator.tenmo.dao.AccountDao;
-import com.techelevator.tenmo.dao.TransactionDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.User;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,22 +12,20 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private AccountDao accountDao;
-    private UserDao userDao;
-    private TransactionDao transactionDao;
 
-    public UserController(AccountDao accountDao, UserDao userDao, TransactionDao transactionDao) {
-        this.accountDao = accountDao;
+    private UserDao userDao;
+    
+
+    public UserController( UserDao userDao) {
         this.userDao = userDao;
-        this.transactionDao = transactionDao;
     }
 
     @GetMapping(path = "")
-    public List<User> findAllSafe() {
-        return userDao.findAllSafe();
+    public List<User> listAll() {
+        return userDao.listAll();
     }
 
-    @GetMapping(path = "/id/{username}")
+    @GetMapping(path = "/{username}")
     public int findIdByUserName(@PathVariable("username") String username) {
         return userDao.findIdByUsername(username);
     }
