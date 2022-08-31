@@ -26,73 +26,78 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Request;
 
-@RestController 
+@RestController
 @CrossOrigin
 @PreAuthorize("isAuthenticated()")
-@RequestMapping("/requests")
+@RequestMapping("/request")
 public class RequestController {
 
-    private UserDao userDao; 
-    private AccountDao accountDao; 
-    private RequestDao requestDao; 
+    private UserDao userDao;
+    private AccountDao accountDao;
+    private RequestDao requestDao;
 
     public RequestController(UserDao userDao, AccountDao accountDao, RequestDao requestDao) {
-        this.userDao = userDao; 
-        this.accountDao = accountDao; 
-        this.requestDao = requestDao; 
+        this.userDao = userDao;
+        this.accountDao = accountDao;
+        this.requestDao = requestDao;
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/list/{user_id}")
-    public List<Request> listRequests(@PathVariable Long user_id) {
-        return requestDao.listRequests(user_id);
+    @GetMapping("/list/{userId}")
+    public List<Request> listRequests(@PathVariable Long userId) {
+        return requestDao.listRequests(userId);
     }
-
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{requestId}")
     public Request getRequestById(@PathVariable int requestId) {
         return requestDao.getRequestById(requestId);
     }
-    
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("") 
-    public Request postRequestTransfer(@Valid @RequestBody Request newRequest, Principal principal) {
-        Account to = accountDao.findAccountByUserId((long)userDao.findIdByUsername(principal.getName()));
 
-        if (to.getAccount_id() != newRequest.getAccountTo() || 
-        accountDao.findByAccountId(newRequest.getAccountFrom()) == null) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
+    public Request postRequestTransfer(@Valid @RequestBody Request newRequest, Principal principal) {
+        Account to = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
+
+        if (to.getaccountId() != newRequest.getAccountTo() || to.getaccountId() == newRequest.getAccountFrom() ||
+                accountDao.findByAccountId(newRequest.getAccountFrom()) == null) {
             throw new AccessDeniedException("Invalid request made");
-        } 
-        else {
-            requestDao.createRequest(newRequest); 
+        } else {
+            requestDao.createRequest(newRequest);
         }
-        return newRequest; 
+        return newRequest;
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{requestId}")
-    public boolean approveOrDenyRequest(@Valid @RequestBody Request request, @PathVariable int requestId, Principal principal) {
-        Account from = accountDao.findAccountByUserId((long)userDao.findIdByUsername(principal.getName()));
+    public boolean approveOrDenyRequest(@Valid @RequestBody Request request, @PathVariable int requestId,
+            Principal principal) {
 
-        if (from.getAccount_id() != request.getAccountFrom() || 
-        accountDao.findByAccountId(request.getAccountTo()) == null) {
-            throw new AccessDeniedException("Invalid request made");
-        } 
-
-        if (!request.isApproveRequest()) {
-            requestDao.updateRequest(request, requestId);
-        } else {
-            requestDao.updateRequest(request, requestId); 
+        Request requestToUpdate = requestDao.getRequestById(requestId);
+        requestDao.updateRequest(request, requestToUpdate.getRequestId());
+        if (request.isApproveRequest()) {
             accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
             accountDao.depositAmount(request.getAmount(), request.getAccountTo());
         }
+        return true;
 
-     return true; 
+        // Account from = accountDao.findAccountByUserId((long)
+        // userDao.findIdByUsername(principal.getName()));
+
+        // if (from.getaccountId() != request.getAccountFrom() ||
+        // accountDao.findByAccountId(request.getAccountTo()) == null) {
+        // throw new AccessDeniedException("Invalid request made");
+        // }
+
+        // if (!request.isApproveRequest()) {
+        // requestDao.updateRequest(request, requestId);
+        // } else {
+        // requestDao.updateRequest(request, requestId);
+        // accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
+        // accountDao.depositAmount(request.getAmount(), request.getAccountTo());
+        // }
+
+        // return true;
     }
-
-
-   
-
 
 }

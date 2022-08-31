@@ -1,20 +1,21 @@
 package com.techelevator.tenmo.dao;
+
 import com.techelevator.tenmo.model.Account;
 import java.math.BigDecimal;
 
-
 public interface AccountDao {
 
-    
-    Account findAccountByUserId(Long user_id);
+    Account findAccountByUserId(Long userId);
 
-    Account findByAccountId(int account_id);
+    Account findByAccountId(int accountId);
 
-    int accountIdByUserName(String username); 
+    int accountIdByUserName(String username);
 
-    boolean withdrawAmount(BigDecimal balance, int account_id);
+    int accountIdByUserId(Long userId);
 
-    boolean depositAmount(BigDecimal balance, int account_id); 
+    boolean withdrawAmount(BigDecimal balance, int accountId);
 
-    boolean sufficientFunds(BigDecimal amount, int account_id);
+    boolean depositAmount(BigDecimal balance, int accountId);
+
+    boolean sufficientFunds(BigDecimal amount, int accountId);
 }

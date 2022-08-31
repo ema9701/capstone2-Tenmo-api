@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.LoginDTO;
 import com.techelevator.tenmo.model.User;
 
 import java.util.HashMap;
@@ -8,7 +9,9 @@ import java.util.Map;
 
 public interface UserDao {
 
-    List<User> listAll(); 
+    List<User> listAll();
+
+    User getUserById(Long userId);
 
     User findByUsername(String username);
 
@@ -16,6 +19,6 @@ public interface UserDao {
 
     boolean create(String username, String password);
 
+    int changePassword(String newPassword, Long userId);
+
 }
-
-

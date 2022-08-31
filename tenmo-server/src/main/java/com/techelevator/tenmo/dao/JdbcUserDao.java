@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.UserNotFoundException;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -26,17 +28,26 @@ public class JdbcUserDao implements UserDao {
     public List<User> listAll() {
         List<User> users = new ArrayList<>();
 
-        String sql = "SELECT user_id, username FROM tenmo_user; ";
+        String sql = "SELECT * FROM tenmo_user; ";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
         while (results.next()) {
-            User user = new User(); 
-            user.setId(results.getLong("user_id"));
-            user.setUsername(results.getString("username"));   
-            users.add(user);  
-        } 
+            User user = mapRowToUser(results);
+            users.add(user);
+        }
         return users;
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        String sql = "SELECT * FROM users WHERE user_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        if (results.next()) {
+            return mapRowToUser(results);
+        } else {
+            throw new UserNotFoundException();
+        }
     }
 
     @Override
@@ -51,18 +62,20 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public User findByUsername(String username) throws UsernameNotFoundException {
-        String sql = "SELECT user_id, username, password_hash FROM tenmo_user WHERE username ILIKE ?;";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, username);
-        if (rowSet.next()) {
-            return mapRowToUser(rowSet);
+    public User findByUsername(String username) {
+        if (username == null)
+            throw new IllegalArgumentException("Username cannot be null");
+
+        for (User user : this.listAll()) {
+            if (user.getUsername().equalsIgnoreCase(username)) {
+                return user;
+            }
         }
         throw new UsernameNotFoundException("User " + username + " was not found.");
     }
 
     @Override
     public boolean create(String username, String password) {
-        // create user
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
         Integer newUserId;
@@ -73,7 +86,6 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
 
-        
         String accountSql = "INSERT INTO account (user_id, balance) VALUES (?, 1000.00) RETURNING account_id";
         Integer accountId;
         try {
@@ -85,6 +97,12 @@ public class JdbcUserDao implements UserDao {
         return true;
     }
 
+    @Override
+    public int changePassword(String newPassword, Long userId) {
+        String changedPasswordSql = "UPDATE tenmo_user SET password_hash = ? WHERE user_id = ?; ";
+        String password_hash = new BCryptPasswordEncoder().encode(newPassword);
+        return jdbcTemplate.update(changedPasswordSql, password_hash, userId);
+    }
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();

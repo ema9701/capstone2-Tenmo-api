@@ -1,5 +1,7 @@
 package com.techelevator.tenmo.controller;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +35,8 @@ public class AuthenticationController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private UserDao userDao;
 
-    public AuthenticationController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserDao userDao) {
+    public AuthenticationController(TokenProvider tokenProvider,
+            AuthenticationManagerBuilder authenticationManagerBuilder, UserDao userDao) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userDao = userDao;
@@ -41,8 +45,8 @@ public class AuthenticationController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public LoginResponse login(@Valid @RequestBody LoginDTO loginDto) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDto.getUsername(), loginDto.getPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -59,6 +63,13 @@ public class AuthenticationController {
         if (!userDao.create(newUser.getUsername(), newUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed.");
         }
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "/login/update")
+    public void changePassword(@Valid @RequestBody LoginDTO user, Principal principal) {
+        User aUser = userDao.findByUsername(principal.getName());
+        userDao.changePassword(user.getPassword(), aUser.getId());
     }
 
     /**
@@ -91,4 +102,3 @@ public class AuthenticationController {
         }
     }
 }
-

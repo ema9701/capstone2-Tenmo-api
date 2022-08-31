@@ -16,5 +16,5 @@ public interface RequestDao {
     boolean createRequest(Request newRequest);
 
     boolean updateRequest(Request request, int request_id);
-    
+
 }

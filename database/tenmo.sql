@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
---ROLLBACK; 
+-- ROLLBACK; 
 
 DROP TABLE IF EXISTS tenmo_user, account, transfers, requests;
 
