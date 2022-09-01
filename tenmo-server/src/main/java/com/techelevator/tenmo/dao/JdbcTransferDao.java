@@ -25,11 +25,12 @@ public class JdbcTransferDao implements TransferDao {
     public List<Transfer> listTransfers(Long userId) {
         List<Transfer> transferList = new ArrayList<>();
 
-        String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, status " +
+        String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, transfer_status " +
                 " FROM TRANSFERS  " +
                 " JOIN account ON transfers.account_from = account.account_id " +
                 " OR (transfers.account_to = account.account_id) " +
-                " WHERE user_id = ?; ";
+                " WHERE user_id = ? " +
+                " ORDER BY transfer_date DESC; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
 
         while (results.next()) {
@@ -42,7 +43,7 @@ public class JdbcTransferDao implements TransferDao {
     public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
 
-        String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, status " +
+        String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, transfer_status " +
                 " FROM TRANSFERS " +
                 " WHERE transfer_id = ?; ";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, transferId);
@@ -55,20 +56,19 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public boolean createTransfer(Transfer newTransfer) {
-        newTransfer.setStatus("APPROVED");
-
-        String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, status) " +
+        String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
                 " VALUES (?, ?, ?, ?) RETURNING transfer_id; ";
+        newTransfer.setStatus("PENDING");
         Integer newTransferId;
         try {
             newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, newTransfer.getAccountFrom(),
                     newTransfer.getAccountTo(), newTransfer.getAmount(), newTransfer.getStatus());
+
+            newTransfer.setTransferId(newTransferId);
+
         } catch (DataAccessException e) {
-            System.out.println(e.getLocalizedMessage());
-            return false;
         }
         return true;
-
     }
 
     private Transfer mapRowToTransfer(SqlRowSet rowSet) {
@@ -79,7 +79,7 @@ public class JdbcTransferDao implements TransferDao {
         transfer.setAccountFrom(rowSet.getInt("account_from"));
         transfer.setAccountTo(rowSet.getInt("account_to"));
         transfer.setAmount(rowSet.getBigDecimal("amount"));
-        transfer.setStatus(rowSet.getString("status"));
+        transfer.setStatus(rowSet.getString("transfer_status"));
 
         return transfer;
     }

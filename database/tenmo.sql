@@ -40,7 +40,7 @@ CREATE TABLE transfers (
 	account_from int NOT NULL, 
 	account_to int NOT NULL,
 	amount decimal (13, 2) NOT NULL,
-	status varchar(10) NOT NULL,	
+	transfer_status varchar(15),	
 	CONSTRAINT PK_transfers PRIMARY KEY (transfer_id)
 );
   
@@ -51,7 +51,7 @@ CREATE TABLE requests (
 	account_to int NOT NULL,
 	amount decimal (13, 2) NOT NULL,
 	approve_request boolean,
-	status varchar(10) NOT NULL,
+	request_status varchar(15),
 	CONSTRAINT PK_requests PRIMARY KEY (request_id)
 );
 
@@ -60,6 +60,12 @@ ALTER TABLE transfers ADD CONSTRAINT FK_transfers_account_to FOREIGN KEY (accoun
 
 ALTER TABLE requests ADD CONSTRAINT FK_requests_account_from FOREIGN KEY (account_from) REFERENCES account(account_id);
 ALTER TABLE requests ADD CONSTRAINT FK_requests_account_to FOREIGN KEY (account_to) REFERENCES account(account_id);
+
+ALTER TABLE transfers ADD CONSTRAINT CK_transfers_amount CHECK(amount > 0); 
+ALTER TABLE transfers ADD CONSTRAINT CK_transfers_status CHECK (transfer_status IN ('PENDING', 'APPROVED', 'REJECTED')); 
+
+ALTER TABLE requests ADD CONSTRAINT CK_requests_amount CHECK (amount > 0);
+ALTER TABLE requests ADD CONSTRAINT CK_requests_status CHECK (request_status IN ('PENDING', 'APPROVED', 'REJECTED')); 
 
 INSERT INTO tenmo_user (username,password_hash) VALUES ('user1','$2a$10$A4EQFlbUdU1IV11aQc20jORTMYJ0/th12R4vk8Ybjjc7FrhfA9VRK') RETURNING user_id;
 INSERT INTO account (user_id, balance) VALUES (1001, 1000.00) RETURNING account_id;

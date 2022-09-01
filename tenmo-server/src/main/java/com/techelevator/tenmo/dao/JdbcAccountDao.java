@@ -24,7 +24,7 @@ public class JdbcAccountDao implements AccountDao {
                 " WHERE account_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
 
-        while (results.next()) {
+        if (results.next()) {
             account = mapRowToAccount(results);
         }
         return account;
@@ -92,10 +92,6 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public boolean sufficientFunds(BigDecimal amount, int accountId) {
         Account account = findByAccountId(accountId);
-        // BigDecimal balance = account.getBalance();
-        // BigDecimal zero = new BigDecimal("0.00");
-        // return balance.compareTo(amount) == 1 && amount.compareTo(zero) == 1;
-
         return account.getBalance().compareTo(amount) > 0;
     }
 

@@ -57,9 +57,10 @@ public class RequestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public Request postRequestTransfer(@Valid @RequestBody Request newRequest, Principal principal) {
-        Account to = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
+        Account requestor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
 
-        if (to.getaccountId() != newRequest.getAccountTo() || to.getaccountId() == newRequest.getAccountFrom() ||
+        if (requestor.getaccountId() != newRequest.getAccountTo()
+                || requestor.getaccountId() == newRequest.getAccountFrom() ||
                 accountDao.findByAccountId(newRequest.getAccountFrom()) == null) {
             throw new AccessDeniedException("Invalid request made");
         } else {
@@ -72,32 +73,36 @@ public class RequestController {
     @PutMapping("/{requestId}")
     public boolean approveOrDenyRequest(@Valid @RequestBody Request request, @PathVariable int requestId,
             Principal principal) {
-
+        Account grantor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
         Request requestToUpdate = requestDao.getRequestById(requestId);
-        requestDao.updateRequest(request, requestToUpdate.getRequestId());
-        if (request.isApproveRequest()) {
-            accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
-            accountDao.depositAmount(request.getAmount(), request.getAccountTo());
+        if (requestToUpdate.getStatus().equals("PENDING") && request.getAccountFrom() == grantor.getaccountId()) {
+            requestDao.updateRequest(request, requestToUpdate.getRequestId());
+            if (request.isApproveRequest()) {
+                accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
+                accountDao.depositAmount(request.getAmount(), request.getAccountTo());
+            }
+            return true;
+        } else {
+            throw new AccessDeniedException("Cannot update a non-pending request");
         }
-        return true;
-
-        // Account from = accountDao.findAccountByUserId((long)
-        // userDao.findIdByUsername(principal.getName()));
-
-        // if (from.getaccountId() != request.getAccountFrom() ||
-        // accountDao.findByAccountId(request.getAccountTo()) == null) {
-        // throw new AccessDeniedException("Invalid request made");
-        // }
-
-        // if (!request.isApproveRequest()) {
-        // requestDao.updateRequest(request, requestId);
-        // } else {
-        // requestDao.updateRequest(request, requestId);
-        // accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
-        // accountDao.depositAmount(request.getAmount(), request.getAccountTo());
-        // }
-
-        // return true;
     }
 
 }
+
+// Account from = accountDao.findAccountByUserId((long)
+// userDao.findIdByUsername(principal.getName()));
+
+// if (from.getaccountId() != request.getAccountFrom() ||
+// accountDao.findByAccountId(request.getAccountTo()) == null) {
+// throw new AccessDeniedException("Invalid request made");
+// }
+
+// if (!request.isApproveRequest()) {
+// requestDao.updateRequest(request, requestId);
+// } else {
+// requestDao.updateRequest(request, requestId);
+// accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
+// accountDao.depositAmount(request.getAmount(), request.getAccountTo());
+// }
+
+// return true;

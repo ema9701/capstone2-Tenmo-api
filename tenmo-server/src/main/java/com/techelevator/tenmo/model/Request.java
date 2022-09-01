@@ -1,27 +1,39 @@
 package com.techelevator.tenmo.model;
+
 import java.sql.Timestamp;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public class Request {
-    
-    private int requestId; 
-    private Timestamp requestDate; 
-    private int accountFrom; 
+
+    private int requestId;
+    private Timestamp requestDate;
+    @NotNull
+    private int accountFrom;
+    @NotNull
     private int accountTo;
-    private BigDecimal amount; 
-    private Boolean approveRequest; 
-    private String status; 
+    @Positive
+    private BigDecimal amount;
+    private Boolean approveRequest;
+    private String status;
 
-    public Request() {}
+    public Request() {
+    }
 
-    public Request(int requestId, Timestamp requestDate, int accountFrom, int accountTo, BigDecimal amount, Boolean approveRequest, String status) {
-        this.requestId = requestId; 
-        this.requestDate = requestDate; 
-        this.accountFrom = accountFrom; 
-        this.accountTo = accountTo; 
-        this.amount = amount;  
+    public Request(int requestId, Timestamp requestDate, int accountFrom, int accountTo, BigDecimal amount,
+            Boolean approveRequest, String status) {
+        this.requestId = requestId;
+        this.requestDate = requestDate;
+        this.accountFrom = accountFrom;
+        this.accountTo = accountTo;
+        this.amount = amount;
         this.approveRequest = approveRequest;
-        this.status = status; 
+        this.status = status;
     }
 
     public int getRequestId() {
@@ -57,11 +69,11 @@ public class Request {
     }
 
     public BigDecimal getAmount() {
-        return amount; 
+        return amount;
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount; 
+        this.amount = amount;
     }
 
     public Boolean isApproveRequest() {
@@ -73,14 +85,11 @@ public class Request {
     }
 
     public String getStatus() {
-        return status; 
+        return status;
     }
 
     public void setStatus(String status) {
-        this.status = status; 
+        this.status = status;
     }
 
- 
-
-    
 }

@@ -5,12 +5,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
 
    private Long id;
    private String username;
-   @JsonIgnore
+
    private String password;
    private boolean activated;
    private Set<Authority> authorities = new HashSet<>();
@@ -41,30 +42,37 @@ public class User {
       this.username = username;
    }
 
+   @JsonIgnore
    public String getPassword() {
       return password;
    }
 
+   @JsonProperty
    public void setPassword(String password) {
       this.password = password;
    }
 
+   @JsonIgnore
    public boolean isActivated() {
       return activated;
    }
 
+   @JsonProperty
    public void setActivated(boolean activated) {
       this.activated = activated;
    }
 
+   @JsonIgnore
    public Set<Authority> getAuthorities() {
       return authorities;
    }
 
+   @JsonProperty
    public void setAuthorities(Set<Authority> authorities) {
       this.authorities = authorities;
    }
 
+   @JsonProperty
    public void setAuthorities(String authorities) {
       String[] roles = authorities.split(",");
       for (String role : roles) {

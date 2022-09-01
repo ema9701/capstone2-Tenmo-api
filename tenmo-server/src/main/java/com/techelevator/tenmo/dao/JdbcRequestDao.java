@@ -23,7 +23,7 @@ public class JdbcRequestDao implements RequestDao {
         List<Request> requests = new ArrayList<>();
 
         final String sql = " SELECT request_id, request_date, account_from, account_to, amount, " +
-                " approve_request, status FROM requests " +
+                " approve_request, request_status FROM requests " +
                 " JOIN account ON requests.account_from = account.account_id " +
                 " OR (requests.account_to = account.account_id) " +
                 " WHERE user_id = ?; ";
@@ -40,7 +40,7 @@ public class JdbcRequestDao implements RequestDao {
         Request request = null;
 
         final String sql = " SELECT request_id, request_date, account_from, account_to, amount, " +
-                " approve_request, status FROM requests " +
+                " approve_request, request_status FROM requests " +
                 " WHERE request_id = ?; ";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, requestId);
         if (result.next()) {
@@ -51,14 +51,18 @@ public class JdbcRequestDao implements RequestDao {
 
     @Override
     public boolean createRequest(Request newRequest) {
-        newRequest.setStatus("PENDING");
-        final String sql = " INSERT INTO requests (account_from, account_to, amount, approve_request, status) " +
+
+        final String sql = " INSERT INTO requests (account_from, account_to, amount, approve_request, request_status) "
+                +
                 " VALUES (?, ?, ?, ?, ?) RETURNING request_id; ";
+        newRequest.setStatus("PENDING");
         Integer newRequestId;
         try {
             newRequestId = jdbcTemplate.queryForObject(sql, Integer.class, newRequest.getAccountFrom(),
                     newRequest.getAccountTo(),
                     newRequest.getAmount(), newRequest.isApproveRequest(), newRequest.getStatus());
+            newRequest.setRequestId(newRequestId);
+
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
@@ -69,7 +73,8 @@ public class JdbcRequestDao implements RequestDao {
     @Override
     public boolean updateRequest(Request request, int requestId) {
 
-        final String sql = " UPDATE requests SET account_from = ?, account_to = ?, amount = ?, approve_request = ?, status = ? WHERE request_id = ?; ";
+        final String sql = " UPDATE requests SET account_from = ?, account_to = ?, amount = ?, approve_request = ?, " +
+                " request_status = ? WHERE request_id = ?; ";
         if (!request.isApproveRequest()) {
             request.setStatus("REJECTED");
         } else {
@@ -89,7 +94,7 @@ public class JdbcRequestDao implements RequestDao {
         request.setAccountTo(rs.getInt("account_to"));
         request.setAmount(rs.getBigDecimal("amount"));
         request.setApproveRequest(rs.getBoolean("approve_request"));
-        request.setStatus(rs.getString("status"));
+        request.setStatus(rs.getString("request_status"));
 
         return request;
     }

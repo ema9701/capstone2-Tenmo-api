@@ -6,6 +6,8 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.InvalidMoneyWireException;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -49,15 +51,22 @@ public class TransferController {
     @PostMapping("")
     public Transfer postTransfer(@Valid @RequestBody Transfer newTransfer, Principal principal) {
 
-        Account from = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
+        Account sender = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
+        Account recipient = accountDao.findByAccountId(newTransfer.getAccountTo());
 
-        if (from.getaccountId() != newTransfer.getAccountFrom() || from.getaccountId() == newTransfer.getAccountTo() ||
-                accountDao.findByAccountId(newTransfer.getAccountTo()) == null) {
-            throw new AccessDeniedException("Please select a valid recipient");
+        if (sender.getaccountId() != recipient.getaccountId()
+                && sender.getaccountId() == newTransfer.getAccountFrom()) {
+            try {
+                transferDao.createTransfer(newTransfer);
+                accountDao.withdrawAmount(newTransfer.getAmount(), newTransfer.getAccountFrom());
+                accountDao.depositAmount(newTransfer.getAmount(), newTransfer.getAccountTo());
+            } catch (InvalidMoneyWireException e) {
+
+                System.out.println(e.getMessage());
+
+            }
         } else {
-            accountDao.withdrawAmount(newTransfer.getAmount(), newTransfer.getAccountFrom());
-            accountDao.depositAmount(newTransfer.getAmount(), newTransfer.getAccountTo());
-            transferDao.createTransfer(newTransfer);
+            throw new AccessDeniedException("Please select a valid recipient.");
         }
         return newTransfer;
     }
