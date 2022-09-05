@@ -28,8 +28,8 @@ public class AccountController {
         return accountDao.findByAccountId(accountId);
     }
 
-    @GetMapping(path = "")
-    public int accountIdByUserName(@RequestParam String username) {
+    @GetMapping(path = "/idbyname/{username}")
+    public int accountIdByUserName(@PathVariable String username) {
         return accountDao.accountIdByUserName(username);
     }
 

@@ -58,15 +58,15 @@ public class JdbcTransferDao implements TransferDao {
     public boolean createTransfer(Transfer newTransfer) {
         String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
                 " VALUES (?, ?, ?, ?) RETURNING transfer_id; ";
-        newTransfer.setStatus("PENDING");
+        newTransfer.setStatus("APPROVED");
         Integer newTransferId;
         try {
             newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, newTransfer.getAccountFrom(),
                     newTransfer.getAccountTo(), newTransfer.getAmount(), newTransfer.getStatus());
-
             newTransfer.setTransferId(newTransferId);
-
         } catch (DataAccessException e) {
+            System.out.println(e.getLocalizedMessage());
+            return false;
         }
         return true;
     }

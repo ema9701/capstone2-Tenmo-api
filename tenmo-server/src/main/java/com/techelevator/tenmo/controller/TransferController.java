@@ -21,10 +21,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-@RestController
-@CrossOrigin
 @PreAuthorize("isAuthenticated()")
 @RequestMapping("/transfer")
+@RestController
+@CrossOrigin
 public class TransferController {
 
     private UserDao userDao;
@@ -53,20 +53,15 @@ public class TransferController {
 
         Account sender = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
         Account recipient = accountDao.findByAccountId(newTransfer.getAccountTo());
+        BigDecimal cash = newTransfer.getAmount();
 
         if (sender.getaccountId() != recipient.getaccountId()
                 && sender.getaccountId() == newTransfer.getAccountFrom()) {
-            try {
-                transferDao.createTransfer(newTransfer);
-                accountDao.withdrawAmount(newTransfer.getAmount(), newTransfer.getAccountFrom());
-                accountDao.depositAmount(newTransfer.getAmount(), newTransfer.getAccountTo());
-            } catch (InvalidMoneyWireException e) {
-
-                System.out.println(e.getMessage());
-
-            }
+            accountDao.withdrawAmount(cash, sender.getaccountId());
+            accountDao.depositAmount(cash, recipient.getaccountId());
+            transferDao.createTransfer(newTransfer);
         } else {
-            throw new AccessDeniedException("Please select a valid recipient.");
+            throw new AccessDeniedException("Please select a valid recipient");
         }
         return newTransfer;
     }

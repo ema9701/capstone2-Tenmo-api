@@ -10,7 +10,7 @@
 			<tbody>
 				<tr v-for="user in users" v-bind:key="user.id">
 					<td>{{ user.id }}</td>
-					<td @click="selectRecipient(user.id)">{{ user.username }}</td>
+					<td>{{ user.username }}</td>
 				</tr>
 			</tbody>
 		</table>

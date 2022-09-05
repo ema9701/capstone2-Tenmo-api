@@ -10,7 +10,7 @@ export default {
       },
 
       getAcctIdByUsername(username) {
-        return axios.get(`/account`, username);
+        return axios.get(`/account/idbyname/${username}`);
       },
 
       getAcctIdByUserId(userId) {

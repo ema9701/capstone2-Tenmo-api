@@ -74,7 +74,7 @@ public class JdbcAccountDao implements AccountDao {
         if (!sufficientFunds(amount, accountId)) {
             throw new ArithmeticException("Insufficient funds for transfer.");
         } else {
-            String sql = " UPDATE account SET balance = balance - ? " +
+            final String sql = " UPDATE account SET balance = balance - ? " +
                     " WHERE account_id = ?; ";
 
             return (jdbcTemplate.update(sql, amount, accountId) == 1);
@@ -83,16 +83,29 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public boolean depositAmount(BigDecimal amount, int accountId) {
-        String sql = "UPDATE account SET balance = balance + ? " +
+        final String sql = "UPDATE account SET balance = balance + ? " +
                 " WHERE account_id = ?; ";
 
         return (jdbcTemplate.update(sql, amount, accountId) == 1);
     }
 
     @Override
+    public boolean transact(BigDecimal amount, int from, int to) throws ArithmeticException {
+        Account fromAcc = findByAccountId(from);
+        Account toAcc = findByAccountId(to);
+        if (fromAcc.getBalance().compareTo(amount) > 0) {
+            final String SqlWithdraw = " UPDATE account set balance = balance + ? WHERE account_id = ?; ";
+            final String SqlDeposit = " UPDATE account set balance = balance - ? WHERE account_id = ?; ";
+
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean sufficientFunds(BigDecimal amount, int accountId) {
         Account account = findByAccountId(accountId);
-        return account.getBalance().compareTo(amount) > 0;
+        return account.getBalance().compareTo(amount) >= 0;
     }
 
     private Account mapRowToAccount(SqlRowSet rowSet) {

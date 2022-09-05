@@ -78,8 +78,12 @@ public class RequestController {
         if (requestToUpdate.getStatus().equals("PENDING") && request.getAccountFrom() == grantor.getaccountId()) {
             requestDao.updateRequest(request, requestToUpdate.getRequestId());
             if (request.isApproveRequest()) {
-                accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
-                accountDao.depositAmount(request.getAmount(), request.getAccountTo());
+                try {
+                    accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
+                    accountDao.depositAmount(request.getAmount(), request.getAccountTo());
+                } catch (ArithmeticException e) {
+                    System.out.println(e.getLocalizedMessage());
+                }
             }
             return true;
         } else {

@@ -18,4 +18,6 @@ public interface AccountDao {
     boolean depositAmount(BigDecimal balance, int accountId);
 
     boolean sufficientFunds(BigDecimal amount, int accountId);
+
+    boolean transact(BigDecimal balance, int from, int to) throws ArithmeticException;
 }

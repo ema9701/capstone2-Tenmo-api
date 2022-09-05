@@ -62,7 +62,6 @@ public class JdbcRequestDao implements RequestDao {
                     newRequest.getAccountTo(),
                     newRequest.getAmount(), newRequest.isApproveRequest(), newRequest.getStatus());
             newRequest.setRequestId(newRequestId);
-
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;

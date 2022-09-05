@@ -7,6 +7,7 @@ import RegisterView from "@/views/RegisterView";
 import SelectUserView from "@/views/SelectUserView";  
 import SelectUsers from "@/components/SelectUsers";
 import WireMoney from "@/components/WireMoney";
+import TransferList from "@/components/TransferList";
 import store from "@/store/index";
 
 const routes = [
@@ -76,13 +77,21 @@ const routes = [
 	}
 },
 {
-	path: '/wire-money/:id',
+	path: '/wire-money/',
 	name: 'wire-money',
 	component: WireMoney,
 	meta: {
 		requiresAuth: true,
 	}
 },
+{
+	path: '/transfers/',
+	name: 'transfer-list',
+	component: TransferList,
+	meta: {
+		requiresAuth: true, 
+	}
+}
 ];
 
 const router = new createRouter({
