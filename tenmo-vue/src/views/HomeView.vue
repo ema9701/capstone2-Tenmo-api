@@ -1,19 +1,18 @@
 <template>
-	<div class="home">
-		<h1>Home</h1>
-		<p>You must be authenticated to see this</p>
-		<account-details />
-	</div>
+	<account-details />
 </template>
 
 <script>
-	// @ is an alias to /src
-	import AccountDetails from "@/components/AccountDetails";
+	import { defineComponent } from "vue";
 
-	export default {
+	// Components
+	import AccountDetails from "@/components/AccountDetails.vue";
+
+	export default defineComponent({
 		name: "HomeView",
+
 		components: {
 			AccountDetails,
 		},
-	};
+	});
 </script>
