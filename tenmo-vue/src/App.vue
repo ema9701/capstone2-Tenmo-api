@@ -29,6 +29,11 @@
 </template>
 
 <style>
+	* {
+		font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+			"Lucida Sans", Arial, sans-serif;
+	}
+
 	.nav-box {
 		display: flex;
 		flex-direction: row;
@@ -42,8 +47,6 @@
 	}
 
 	.rlink {
-		font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-			"Lucida Sans", Arial, sans-serif;
 		font-size: 1.5em;
 		margin: auto;
 		text-decoration: none;
