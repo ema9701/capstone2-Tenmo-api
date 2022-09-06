@@ -1,27 +1,44 @@
 <template>
-	<nav id="nav-container" class="nav-box">
-		<router-link class="rlink" v-bind:to="{ name: 'home' }">Home</router-link>
-		<router-link class="rlink" v-bind:to="{ name: 'select-users' }"
-			>View Users</router-link
-		>
-		<router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
-			>Send Transfer</router-link
-		>
-		<router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
-			>View Transfers</router-link
-		>
-		<router-link
-			class="rlink"
-			v-bind:to="{ name: 'logout' }"
-			v-if="$store.state.token != ''"
-			>Logout</router-link
-		>
-		<router-link
-			class="rlink"
-			v-bind:to="{ name: 'update-cred' }"
-			v-if="$store.state.token != ''"
-			>Change Password</router-link
-		>
+	<nav id="nav-container">
+		<ul class="nav-box">
+			<li>
+				<router-link class="rlink" v-bind:to="{ name: 'home' }"
+					>Home</router-link
+				>
+			</li>
+			<li>
+				<router-link class="rlink" v-bind:to="{ name: 'select-users' }"
+					>View Users</router-link
+				>
+			</li>
+			<li>
+				<router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
+					>Send Transfer</router-link
+				>
+			</li>
+			<li>
+				<router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
+					>View Transfers</router-link
+				>
+			</li>
+			<li>
+				<router-link
+					class="rlink"
+					v-bind:to="{ name: 'logout' }"
+					v-if="$store.state.token != ''"
+					>Logout</router-link
+				>
+			</li>
+			<li>
+				<router-link
+					class="rlink"
+					v-bind:to="{ name: 'update-cred' }"
+					v-if="$store.state.token != ''"
+					>Change Password</router-link
+				>
+			</li>
+			<li></li>
+		</ul>
 	</nav>
 	<div class="view-container">
 		<router-view />
@@ -29,35 +46,31 @@
 </template>
 
 <style>
-	* {
-		font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-			"Lucida Sans", Arial, sans-serif;
-	}
-
 	.nav-box {
+		font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+			"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+			"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 		display: flex;
 		flex-direction: row;
 		justify-content: space-evenly;
 		border-radius: 3px;
 		border-style: solid;
 		border-width: 3px;
-		padding: auto;
-		background-color: rgb(36, 230, 236);
-		border-color: teal;
+
+		background-color: #2780e3;
+		border-color: #20c997;
+	}
+
+	nav > ul > li {
+		list-style: none;
 	}
 
 	.rlink {
 		font-size: 1.5em;
 		margin: auto;
 		text-decoration: none;
-		color: rgb(4, 12, 16);
-	}
-
-	a:not(:last-child) {
-		border-right-style: solid;
-		border-width: thin;
-		padding-left: 5%;
-		padding-right: 5%;
+		color: #fff;
+		padding: 1em;
 	}
 
 	.rlink.router-link-exact-active {
