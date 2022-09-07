@@ -1,49 +1,67 @@
 <template>
-	<v-toolbar app color="blue darken-4" dark>
-		<v-btn flat
-			><router-link class="rlink" v-bind:to="{ name: 'home' }"
-				>Home</router-link
-			></v-btn
-		>
-		<v-btn flat
-			><router-link class="rlink" v-bind:to="{ name: 'select-users' }"
-				>View Users</router-link
-			></v-btn
-		>
-		<v-btn flat
-			><router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
-				>Send Transfer</router-link
-			></v-btn
-		>
-		<v-btn flat
-			><router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
-				>View Transfers</router-link
-			></v-btn
-		>
-		<v-btn flat
-			><router-link
-				class="rlink"
-				v-bind:to="{ name: 'logout' }"
-				v-if="$store.state.token != ''"
-				>Logout</router-link
-			></v-btn
-		>
-		<v-btn flat
-			><router-link
-				class="rlink"
-				v-bind:to="{ name: 'update-cred' }"
-				v-if="$store.state.token != ''"
-				>Change Password</router-link
-			></v-btn
-		>
-	</v-toolbar>
+	<v-navigation-drawer theme="dark" v-model="drawer" app>
+		<v-layout>
+			<v-list color="transparent">
+				<v-list-item prepend-icon="mdi-view-dashboard">
+					<v-btn flat
+						><router-link class="rlink" v-bind:to="{ name: 'home' }"
+							>Home</router-link
+						></v-btn
+					>
+				</v-list-item>
+				<v-list-item prepend-icon="mdi-account-box"
+					><v-btn flat
+						><router-link class="rlink" v-bind:to="{ name: 'select-users' }"
+							>View Users</router-link
+						></v-btn
+					></v-list-item
+				>
+				<v-list-item prepend-icon="mdi-gavel">
+					<v-btn flat
+						><router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
+							>Send Transfer</router-link
+						></v-btn
+					></v-list-item
+				>
+				<v-list-item prepend-icon="mdi-gavel"
+					><v-btn flat
+						><router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
+							>View Transfers</router-link
+						></v-btn
+					></v-list-item
+				>
+				<v-list-item prepend-icon="mdi-gavel" v-if="$store.state.token != ''"
+					><v-btn flat
+						><router-link class="rlink" v-bind:to="{ name: 'update-cred' }"
+							>Change Password</router-link
+						></v-btn
+					></v-list-item
+				>
+			</v-list>
+		</v-layout>
+		<template v-slot:append>
+			<div class="pa-2">
+				<v-btn block v-if="$store.state.token != ''">
+					<router-link class="rlink" v-bind:to="{ name: 'logout' }"
+						>Logout</router-link
+					>
+				</v-btn>
+			</div>
+		</template>
+	</v-navigation-drawer>
+	<v-app-bar app theme="dark">
+		<v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+		<v-toolbar-title>TEnmo</v-toolbar-title>
+	</v-app-bar>
 </template>
 
 <script>
 	export default {
 		name: "navbar-comp",
 		data() {
-			return {};
+			return {
+				drawer: false,
+			};
 		},
 	};
 </script>

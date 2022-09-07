@@ -5,7 +5,8 @@ import store from './store'
 import axios from 'axios'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
-import 'vuetify/styles' // Global CSS has to be imported
+
+
 
 loadFonts()
 

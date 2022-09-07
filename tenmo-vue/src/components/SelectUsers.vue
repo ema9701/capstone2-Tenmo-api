@@ -1,6 +1,6 @@
 <template>
 	<div id="select-users">
-		<table id="tblUsers">
+		<!-- <table id="tblUsers">
 			<thead>
 				<tr>
 					<th>UserId</th>
@@ -13,7 +13,21 @@
 					<td>{{ user.username }}</td>
 				</tr>
 			</tbody>
-		</table>
+		</table> -->
+		<v-table fixed-header>
+			<thead>
+				<tr>
+					<th class="text-left">Username</th>
+					<th class="text-left">UserId</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="user in users" :key="user.id">
+					<td>{{ user.username }}</td>
+					<td>{{ user.id }}</td>
+				</tr>
+			</tbody>
+		</v-table>
 	</div>
 </template>
 

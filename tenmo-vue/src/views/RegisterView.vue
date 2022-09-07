@@ -1,42 +1,56 @@
 <template>
 	<div id="register" class="text-center">
-		<form class="form-register" @submit.prevent="register">
-			<h1 class="h3 mb-3 font-weight-normal">Create Account</h1>
-			<div class="alert alert-danger" role="alert" v-if="registrationErrors">
-				{{ registrationErrorMsg }}
-			</div>
-			<label for="username" class="sr-only">Username</label>
-			<input
-				type="text"
-				id="username"
-				class="form-control"
-				placeholder="Username"
-				v-model="user.username"
-				required
-				autofocus
-			/>
-			<label for="password" class="sr-only">Password</label>
-			<input
-				type="password"
-				id="password"
-				class="form-control"
-				placeholder="Password"
-				v-model="user.password"
-				required
-			/>
-			<input
-				type="password"
-				id="confirmPassword"
-				class="form-control"
-				placeholder="Confirm Password"
-				v-model="user.confirmPassword"
-				required
-			/>
-			<router-link :to="{ name: 'login' }">Have an account?</router-link>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">
-				Create Account
-			</button>
-		</form>
+		<v-sheet rounded class="card-register">
+			<v-card class="mx-auto" max-width="344" title="Create an account">
+				<v-form class="form-register" @submit.prevent="register">
+					<v-alert type="error" v-if="registrationErrors">{{
+						registrationErrorMsg
+					}}</v-alert>
+					<v-container>
+						<v-text-field
+							v-model="user.username"
+							class="form-control"
+							color="primary"
+							label="Username"
+							variant="underlined"
+							:rules="[required]"
+							autofocus
+						></v-text-field>
+
+						<v-text-field
+							v-model="user.password"
+							class="form-control"
+							type="Password"
+							color="primary"
+							label="Password"
+							variant="underlined"
+							:rules="[required]"
+						></v-text-field>
+
+						<v-text-field
+							v-model="user.confirmPassword"
+							type="Password"
+							class="form-control"
+							color="primary"
+							label="Confirm Password"
+							variant="underlined"
+							:rules="[required]"
+						></v-text-field>
+						<router-link class="rlink" :to="{ name: 'login' }"
+							>Have an account?</router-link
+						>
+					</v-container>
+					<v-divider></v-divider>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn color="success" type="submit">
+							Complete Registration
+							<v-icon icon="mdi-chevron-right" end></v-icon>
+						</v-btn>
+					</v-card-actions>
+				</v-form>
+			</v-card>
+		</v-sheet>
 	</div>
 </template>
 
@@ -52,6 +66,7 @@
 					confirmPassword: "",
 					role: "user",
 				},
+
 				registrationErrors: false,
 				registrationErrorMsg: "There were problems registering this user.",
 			};
@@ -87,8 +102,15 @@
 				this.registrationErrorMsg =
 					"There were problems registering this user.";
 			},
+			required(v) {
+				return !!v || "Field is required";
+			},
 		},
 	};
 </script>
 
-<style></style>
+<style>
+	#register {
+		margin-top: 5%;
+	}
+</style>
