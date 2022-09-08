@@ -1,6 +1,6 @@
 <template>
 	<div id="wire-money">
-		<div class="status-message error" v-show="errorMsg !== ''">
+		<!-- <div class="status-message error" v-show="errorMsg !== ''">
 			{{ errorMsg }}
 		</div>
 		<form action="">
@@ -35,14 +35,24 @@
 			<br />
 			<button type="submit" @click.prevent="wireMoney()">Send Money</button>
 			<button type="reset">Clear Form</button>
-		</form>
+		</form> -->
+		<select-users>
+			<template v-slot:openForm>
+				<request-form></request-form>
+			</template>
+		</select-users>
 	</div>
 </template>
 
 <script>
 	import accountService from "@/services/AccountService";
 	import transferService from "@/services/TransferService";
+	import SelectUsers from "@/components/SelectUsers";
+	import RequestForm from "@/components/RequestForm";
+
 	export default {
+		name: "wire-money",
+		components: { SelectUsers, RequestForm },
 		data() {
 			return {
 				users: [],
@@ -51,6 +61,7 @@
 				senderAccount: {},
 				receiveAccId: "",
 				errorMsg: "",
+				dialog: false,
 			};
 		},
 		created() {

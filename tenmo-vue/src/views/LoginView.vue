@@ -1,51 +1,51 @@
 <template>
 	<div id="login" class="text-center">
-		<v-sheet rounded class="card-login">
-			<v-card class="mx-auto" max-width="344" title="Sign In">
-				<v-form v-model="form" @submit.prevent="login">
-					<v-alert type="error" v-if="invalidCredentials"
-						>Invalid username and password!</v-alert
-					>
-					<v-alert type="success" v-if="this.$route.query.registration"
-						>Thank you for registering, please sign in.</v-alert
-					>
-					<v-container>
-						<v-text-field
-							v-model="user.username"
-							:rules="[required]"
-							class="mb-2"
-							clearable
-							label="username"
-						></v-text-field>
+		<!-- <v-sheet rounded class="card-login"> -->
+		<v-card class="mx-auto" max-width="344" title="Sign In">
+			<v-form v-model="form" @submit.prevent="login">
+				<v-alert type="error" v-if="invalidCredentials"
+					>Invalid username and password!</v-alert
+				>
+				<v-alert type="success" v-if="this.$route.query.registration"
+					>Thank you for registering, please sign in.</v-alert
+				>
+				<v-container>
+					<v-text-field
+						v-model="user.username"
+						:rules="[required]"
+						class="mb-2"
+						clearable
+						label="username"
+					></v-text-field>
 
-						<v-text-field
-							v-model="user.password"
-							type="Password"
-							:rules="[required]"
-							clearable
-							label="Password"
-							placeholder="Enter your password"
-						></v-text-field>
+					<v-text-field
+						v-model="user.password"
+						type="Password"
+						:rules="[required]"
+						clearable
+						label="Password"
+						placeholder="Enter your password"
+					></v-text-field>
 
-						<router-link :to="{ name: 'register' }"
-							>New to TEnmo? Register here</router-link
-						>
-						<br />
-						<br />
-						<v-btn
-							:disabled="!form"
-							block
-							color="success"
-							size="large"
-							type="submit"
-							variant="elevated"
-						>
-							Sign In
-						</v-btn>
-					</v-container>
-				</v-form>
-			</v-card>
-		</v-sheet>
+					<router-link :to="{ name: 'register' }"
+						>New to TEnmo? Register here</router-link
+					>
+					<br />
+					<br />
+					<v-btn
+						:disabled="!form"
+						block
+						color="success"
+						size="large"
+						type="submit"
+						variant="elevated"
+					>
+						Sign In
+					</v-btn>
+				</v-container>
+			</v-form>
+		</v-card>
+		<!-- </v-sheet> -->
 	</div>
 </template>
 

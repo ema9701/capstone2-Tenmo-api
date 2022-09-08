@@ -1,33 +1,25 @@
 <template>
 	<div id="select-users">
-		<!-- <table id="tblUsers">
-			<thead>
-				<tr>
-					<th>UserId</th>
-					<th>Username</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="user in users" v-bind:key="user.id">
-					<td>{{ user.id }}</td>
-					<td>{{ user.username }}</td>
-				</tr>
-			</tbody>
-		</table> -->
-		<v-table fixed-header>
-			<thead>
-				<tr>
-					<th class="text-left">Username</th>
-					<th class="text-left">UserId</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="user in users" :key="user.id">
-					<td>{{ user.username }}</td>
-					<td>{{ user.id }}</td>
-				</tr>
-			</tbody>
-		</v-table>
+		<v-card
+			class="mx-auto"
+			max-width="344"
+			variant="outlined"
+			v-for="user in users"
+			:key="user.id"
+		>
+			<v-card-item>
+				<div>
+					<div class="text-overline mb-1">TEnmo User</div>
+					<div class="text-h6 mb-1">{{ user.username }}</div>
+					<div class="text-caption">
+						{{ user.id }}
+					</div>
+				</div>
+			</v-card-item>
+			<v-card-actions>
+				<slot name="openForm"></slot>
+			</v-card-actions>
+		</v-card>
 	</div>
 </template>
 
@@ -57,4 +49,4 @@
 	};
 </script>
 
-<style scoped></style>
+<style></style>

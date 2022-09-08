@@ -1,5 +1,5 @@
 <template>
-	<v-navigation-drawer theme="dark" v-model="drawer" app>
+	<v-navigation-drawer v-model="drawer" app>
 		<v-layout>
 			<v-list color="transparent">
 				<v-list-item prepend-icon="mdi-view-dashboard">
@@ -9,21 +9,21 @@
 						></v-btn
 					>
 				</v-list-item>
-				<v-list-item prepend-icon="mdi-account-box"
+				<v-list-item prepend-icon="mdi-account-group"
 					><v-btn flat
 						><router-link class="rlink" v-bind:to="{ name: 'select-users' }"
 							>View Users</router-link
 						></v-btn
 					></v-list-item
 				>
-				<v-list-item prepend-icon="mdi-gavel">
+				<v-list-item prepend-icon="mdi-cash">
 					<v-btn flat
 						><router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
 							>Send Transfer</router-link
 						></v-btn
 					></v-list-item
 				>
-				<v-list-item prepend-icon="mdi-gavel"
+				<v-list-item prepend-icon="mdi-text-search"
 					><v-btn flat
 						><router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
 							>View Transfers</router-link
@@ -49,7 +49,7 @@
 			</div>
 		</template>
 	</v-navigation-drawer>
-	<v-app-bar app theme="dark">
+	<v-app-bar app>
 		<v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 		<v-toolbar-title>TEnmo</v-toolbar-title>
 	</v-app-bar>
