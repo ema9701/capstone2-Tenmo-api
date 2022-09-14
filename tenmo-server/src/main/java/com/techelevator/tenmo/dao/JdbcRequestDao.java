@@ -70,6 +70,18 @@ public class JdbcRequestDao implements RequestDao {
     }
 
     @Override
+    public boolean test(Long from, Long to, BigDecimal amount) {
+        if (from != to) {
+            final String sql = " INSERT INTO requests (account_from, account_to, amount, approve_request, request_status) "
+                    +
+                    " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, ?, 'PENDING') RETURNING request_id; ";
+            return jdbcTemplate.update(sql, from, to, amount) == 1;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public boolean updateRequest(Request request, int requestId) {
 
         final String sql = " UPDATE requests SET account_from = ?, account_to = ?, amount = ?, approve_request = ?, " +

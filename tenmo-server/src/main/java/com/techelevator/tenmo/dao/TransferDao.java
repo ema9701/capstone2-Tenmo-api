@@ -15,4 +15,6 @@ public interface TransferDao {
 
     boolean createTransfer(Transfer newTransfer);
 
+    boolean testInsert(Long from, Long to, BigDecimal amount);
+
 }

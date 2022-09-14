@@ -36,94 +36,98 @@
 			<button type="submit" @click.prevent="wireMoney()">Send Money</button>
 			<button type="reset">Clear Form</button>
 		</form> -->
+		<!-- <account-details /> -->
 		<select-users>
-			<template v-slot:openForm>
-				<request-form></request-form>
+			<template v-slot:formSelect>
+				<v-btn color="primary"><transfer-form></transfer-form></v-btn>
 			</template>
 		</select-users>
 	</div>
 </template>
 
 <script>
-	import accountService from "@/services/AccountService";
-	import transferService from "@/services/TransferService";
+	// import accountService from "@/services/AccountService";
+	// import transferService from "@/services/TransferService";
 	import SelectUsers from "@/components/SelectUsers";
-	import RequestForm from "@/components/RequestForm";
+	import TransferForm from "@/components/TransferForm";
+	// import AccountDetails from "@/components/AccountDetails";
 
 	export default {
 		name: "wire-money",
-		components: { SelectUsers, RequestForm },
+		components: { SelectUsers, TransferForm },
 		data() {
 			return {
 				users: [],
-				transfer: {},
-				selectedUser: {},
-				senderAccount: {},
-				receiveAccId: "",
+				// transfer: {},
+				// selectedUser: {},
+				// senderAccount: {},
+				// receiveAccId: "",
 				errorMsg: "",
-				dialog: false,
+				account: {},
+				// requestDialog: false,
+				transferDialog: false,
 			};
 		},
-		created() {
-			this.listUsers();
-			this.getAccountFrom(this.currentUserId);
-		},
-		methods: {
-			listUsers() {
-				accountService.listUsers().then((response) => {
-					this.users = response.data;
-				});
-			},
-			getAccountFrom(userId) {
-				accountService.getAccountByUserId(userId).then((response) => {
-					this.senderAccount = response.data;
-				});
-			},
-			getRecipientAccId(userId) {
-				accountService.getAcctIdByUserId(userId).then((response) => {
-					this.receiveAccId = response.data;
-				});
-			},
-			wireMoney() {
-				const fromId = this.senderAccount.accountId;
-				const toId = this.receiveAccId;
-				let newTransfer = this.transfer;
-				newTransfer.accountFrom = fromId;
-				newTransfer.accountTo = toId;
-				transferService
-					.postTransfer(newTransfer)
-					.then((response) => {
-						if (response.status === 201) {
-							alert("Transaction processed!");
-						}
-					})
-					.catch((error) => {
-						this.handleErrorResponse(error, "submitting");
-					});
-			},
-			handleErrorResponse(error, verb) {
-				if (error.response) {
-					this.errorMsg =
-						"Error " +
-						verb +
-						" application. Response received was " +
-						error.response.status +
-						" .";
-				} else if (error.request) {
-					this.errorMsg =
-						"Error " + verb + " application. Server could not be reached.";
-				} else {
-					this.errorMsg =
-						"Error " + verb + " application. Request could not be created";
-				}
-			},
-		},
-		computed: {
-			currentUserId() {
-				return this.$store.state.user.id;
-			},
-		},
+		// created() {
+		// 	this.listUsers();
+		// 	this.getAccountFrom(this.currentUserId);
+		// },
+		// methods: {
+		// 	listUsers() {
+		// 		accountService.listUsers().then((response) => {
+		// 			this.users = response.data;
+		// 		});
+		// 	},
+		// 	getAccountFrom(userId) {
+		// 		accountService.getAccountByUserId(userId).then((response) => {
+		// 			this.senderAccount = response.data;
+		// 		});
+		// 	},
+		// 	// getRecipientAccId(userId) {
+		// 	// 	accountService.getAcctIdByUserId(userId).then((response) => {
+		// 	// 		this.receiveAccId = response.data;
+		// 	// 	});
+		// 	// },
+		// 	wireMoney() {
+		// 		const fromId = this.senderAccount.accountId;
+		// 		const toId = this.receiveAccId;
+		// 		let newTransfer = this.transfer;
+		// 		newTransfer.accountFrom = fromId;
+		// 		newTransfer.accountTo = toId;
+		// 		transferService
+		// 			.postTransfer(newTransfer)
+		// 			.then((response) => {
+		// 				if (response.status === 201) {
+		// 					alert("Transaction processed!");
+		// 				}
+		// 			})
+		// 			.catch((error) => {
+		// 				this.handleErrorResponse(error, "submitting");
+		// 			});
+		// 	},
+		// 	handleErrorResponse(error, verb) {
+		// 		if (error.response) {
+		// 			this.errorMsg =
+		// 				"Error " +
+		// 				verb +
+		// 				" application. Response received was " +
+		// 				error.response.status +
+		// 				" .";
+		// 		} else if (error.request) {
+		// 			this.errorMsg =
+		// 				"Error " + verb + " application. Server could not be reached.";
+		// 		} else {
+		// 			this.errorMsg =
+		// 				"Error " + verb + " application. Request could not be created";
+		// 		}
+		// 	},
+		// },
+		// computed: {
+		// 	currentUserId() {
+		// 		return this.$store.state.user.id;
+		// 	},
+		// },
 	};
 </script>
 
-<style scoped></style>
+<style></style>

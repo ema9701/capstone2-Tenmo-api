@@ -71,6 +71,19 @@ public class JdbcTransferDao implements TransferDao {
         return true;
     }
 
+    @Override
+    public boolean testInsert(Long from, Long to, BigDecimal amount) {
+
+        if (from != to) {
+
+            String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
+                    " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, 'APPROVED'); ";
+            return jdbcTemplate.update(sql, from, to, amount) == 1;
+        } else {
+            return false;
+        }
+    }
+
     private Transfer mapRowToTransfer(SqlRowSet rowSet) {
         Transfer transfer = new Transfer();
 

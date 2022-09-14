@@ -17,4 +17,6 @@ public interface RequestDao {
 
     boolean updateRequest(Request request, int request_id);
 
+    boolean test(Long from, Long to, BigDecimal amount);
+
 }

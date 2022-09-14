@@ -25,6 +25,7 @@ import com.techelevator.tenmo.dao.RequestDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Request;
+import com.techelevator.tenmo.model.RequestDTO;
 
 @RestController
 @CrossOrigin
@@ -89,6 +90,12 @@ public class RequestController {
         } else {
             throw new AccessDeniedException("Cannot update a non-pending request");
         }
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
+    public void testRequest(@Valid @RequestBody RequestDTO newRequest, Principal principal) {
+
     }
 
 }

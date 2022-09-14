@@ -17,7 +17,24 @@
 				</div>
 			</v-card-item>
 			<v-card-actions>
-				<slot name="openForm"></slot>
+				<v-row justify="center">
+					<v-btn color="primary" class="ma-2" @click="dialog = true">
+						Send or request
+					</v-btn>
+					<v-dialog v-model="dialog">
+						<v-card>
+							<v-card-title> Select a form </v-card-title>
+							<v-card-text>
+								<slot name="formSelect"></slot>
+							</v-card-text>
+							<v-card-actions>
+								<v-btn color="primary" text @click="dialog = false">
+									Close
+								</v-btn>
+							</v-card-actions>
+						</v-card>
+					</v-dialog>
+				</v-row>
 			</v-card-actions>
 		</v-card>
 	</div>
@@ -31,6 +48,7 @@
 		data() {
 			return {
 				users: {},
+				dialog: false,
 			};
 		},
 		created() {

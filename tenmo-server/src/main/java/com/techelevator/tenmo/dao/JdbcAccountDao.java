@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
 import com.techelevator.tenmo.model.Account;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -72,7 +74,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public boolean withdrawAmount(BigDecimal amount, int accountId) {
         if (!sufficientFunds(amount, accountId)) {
-            throw new ArithmeticException("Insufficient funds for transfer.");
+            throw new InvalidMoneyWireException();
         } else {
             final String sql = " UPDATE account SET balance = balance - ? " +
                     " WHERE account_id = ?; ";

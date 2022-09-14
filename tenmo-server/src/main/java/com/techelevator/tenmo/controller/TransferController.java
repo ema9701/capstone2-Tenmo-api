@@ -1,12 +1,13 @@
 package com.techelevator.tenmo.controller;
 
+import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferDTO;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.InvalidMoneyWireException;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
@@ -52,17 +53,38 @@ public class TransferController {
     public Transfer postTransfer(@Valid @RequestBody Transfer newTransfer, Principal principal) {
 
         Account sender = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
-        Account recipient = accountDao.findByAccountId(newTransfer.getAccountTo());
+        // Account recipient = accountDao.findByAccountId(newTransfer.getAccountTo());
+
         BigDecimal cash = newTransfer.getAmount();
 
-        if (sender.getaccountId() != recipient.getaccountId()
-                && sender.getaccountId() == newTransfer.getAccountFrom()) {
+        if (sender.getaccountId() != newTransfer.getAccountTo()
+                && sender.getaccountId() == newTransfer.getAccountFrom()
+                && accountDao.findByAccountId(newTransfer.getAccountTo()) != null) {
             accountDao.withdrawAmount(cash, sender.getaccountId());
-            accountDao.depositAmount(cash, recipient.getaccountId());
+            accountDao.depositAmount(cash, newTransfer.getAccountTo());
             transferDao.createTransfer(newTransfer);
         } else {
             throw new AccessDeniedException("Please select a valid recipient");
         }
         return newTransfer;
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/test")
+    public void testWire(@Valid @RequestBody TransferDTO newTransfer, Principal principal) {
+        User userFrom = userDao.findByUsername(principal.getName());
+        User userTo = userDao.getUserById(newTransfer.getUserToId());
+
+        Account sender = accountDao.findAccountByUserId(userFrom.getId());
+        Account recipient = accountDao.findAccountByUserId(userTo.getId());
+
+        if (userFrom != userTo) {
+
+            accountDao.withdrawAmount(newTransfer.getTransferAmount(), sender.getaccountId());
+            accountDao.depositAmount(newTransfer.getTransferAmount(), recipient.getaccountId());
+            transferDao.testInsert(sender.getuserId(), recipient.getuserId(), newTransfer.getTransferAmount());
+        } else {
+            throw new InvalidMoneyWireException();
+        }
     }
 }
