@@ -12,25 +12,25 @@ public class Request {
     private int requestId;
     private Timestamp requestDate;
     @NotNull
-    private int accountFrom;
+    private int requester;
     @NotNull
-    private int accountTo;
+    private int grantor;
     @Positive
     private BigDecimal amount;
-    private boolean approve;
+    private boolean validate;
     private String status;
 
     public Request() {
     }
 
-    public Request(int requestId, Timestamp requestDate, int accountFrom, int accountTo, BigDecimal amount, boolean approve,
+    public Request(int requestId, Timestamp requestDate, int requester, int accountTo, BigDecimal amount, boolean validate,
                    String status) {
         this.requestId = requestId;
         this.requestDate = requestDate;
-        this.accountFrom = accountFrom;
-        this.accountTo = accountTo;
+        this.requester = requester;
+        this.grantor = accountTo;
         this.amount = amount;
-        this.approve = approve;
+        this.validate = validate;
         this.status = status;
     }
 
@@ -50,20 +50,20 @@ public class Request {
         this.requestDate = requestDate;
     }
 
-    public int getAccountFrom() {
-        return accountFrom;
+    public int getRequester() {
+        return requester;
     }
 
-    public void setAccountFrom(int accountFrom) {
-        this.accountFrom = accountFrom;
+    public void setRequester(int requester) {
+        this.requester = requester;
     }
 
-    public int getAccountTo() {
-        return accountTo;
+    public int getGrantor() {
+        return grantor;
     }
 
-    public void setAccountTo(int accountTo) {
-        this.accountTo = accountTo;
+    public void setGrantor(int grantor) {
+        this.grantor = grantor;
     }
 
     public BigDecimal getAmount() {
@@ -74,12 +74,12 @@ public class Request {
         this.amount = amount;
     }
 
-    public boolean isApprove() {
-        return approve;
+    public boolean isValidate() {
+        return validate;
     }
 
-    public void setApprove(boolean approve) {
-        this.approve = approve;
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     public String getStatus() {

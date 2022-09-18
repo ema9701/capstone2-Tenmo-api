@@ -16,11 +16,8 @@ public interface RequestDao {
 
     boolean postRequest(RequestDTO newRequest);
 
-    void approve(Request request);
+    void approve(Request request, int requestId);
 
-    void reject(Request request);
-
-
-
+    void reject(Request request, int request_id);
 
 }

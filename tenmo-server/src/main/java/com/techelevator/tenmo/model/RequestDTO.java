@@ -1,27 +1,31 @@
 package com.techelevator.tenmo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 
 public class RequestDTO {
 
-  private Long requestFrom;
-  private Long requestTo;
+  private Long requesterId;
+  private Long grantorId;
   private BigDecimal requestAmount;
+//  @JsonIgnore
+//  private boolean validate;
 
-  public Long getRequestFrom() {
-    return this.requestFrom;
+  public Long getRequesterId() {
+    return this.requesterId;
   }
 
-  public void setRequestFrom(Long requestFrom) {
-    this.requestFrom = requestFrom;
+  public void setRequesterId(Long requesterId) {
+    this.requesterId = requesterId;
   }
 
-  public Long getRequestTo() {
-    return this.requestTo;
+  public Long getGrantorId() {
+    return this.grantorId;
   }
 
-  public void setRequestTo(Long requestTo) {
-    this.requestTo = requestTo;
+  public void setGrantorId(Long grantorId) {
+    this.grantorId = grantorId;
   }
 
   public BigDecimal getRequestAmount() {
@@ -31,5 +35,13 @@ public class RequestDTO {
   public void setRequestAmount(BigDecimal requestAmount) {
     this.requestAmount = requestAmount;
   }
+//
+//  public boolean isValidate() {
+//    return validate;
+//  }
+//
+//  public void setValidate(boolean validate) {
+//    this.validate = validate;
+//  }
 
 }

@@ -21,7 +21,8 @@ public class Transfer {
     public Transfer() {
     }
 
-    public Transfer(int transferId, Timestamp transferDate, int accountFrom, int accountTo, BigDecimal amount, String status) {
+    public Transfer(int transferId, Timestamp transferDate, int accountFrom, int accountTo, BigDecimal amount,
+            String status) {
         this.transferId = transferId;
         this.transferDate = transferDate;
         this.accountFrom = accountFrom;

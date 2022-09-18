@@ -23,10 +23,10 @@ public class JdbcRequestDao implements RequestDao {
     public List<Request> listRequests(Long userId) {
         List<Request> requests = new ArrayList<>();
 
-        final String sql = " SELECT request_id, request_date, account_from, account_to, amount, " +
-                " approve_request, request_status FROM requests " +
-                " JOIN account ON requests.account_from = account.account_id " +
-                " OR (requests.account_to = account.account_id) " +
+        final String sql = " SELECT request_id, request_date, requester_account, grantor_account, amount, " +
+                " validated, request_status FROM requests " +
+                " JOIN account ON requests.requester_account = account.account_id " +
+                " OR (requests.grantor_account = account.account_id) " +
                 " WHERE user_id = ?; ";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
@@ -40,8 +40,8 @@ public class JdbcRequestDao implements RequestDao {
     public Request getRequestById(int requestId) {
         Request request = null;
 
-        final String sql = " SELECT request_id, request_date, account_from, account_to, amount, " +
-                " approve_request, request_status FROM requests " +
+        final String sql = " SELECT request_id, request_date, requester_account, grantor_account, amount, " +
+                " validated, request_status FROM requests " +
                 " WHERE request_id = ?; ";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, requestId);
         if (result.next()) {
@@ -52,11 +52,12 @@ public class JdbcRequestDao implements RequestDao {
 
     @Override
     public boolean postRequest(RequestDTO newRequest) {
-        final String Sql = " INSERT INTO requests (account_from, account_to, amount, request_status) " +
+        final String Sql = " INSERT INTO requests (requester_account, grantor_account, amount, request_status) " +
                 " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, 'PENDING') RETURNING request_id ";
         Integer newRequestId;
         try {
-            newRequestId = jdbcTemplate.queryForObject(Sql, Integer.class, newRequest.getRequestFrom(), newRequest.getRequestTo(), newRequest.getRequestAmount());
+            newRequestId = jdbcTemplate.queryForObject(Sql, Integer.class, newRequest.getRequesterId(),
+                    newRequest.getGrantorId(), newRequest.getRequestAmount());
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
@@ -65,19 +66,23 @@ public class JdbcRequestDao implements RequestDao {
     }
 
     @Override
-    public void approve(Request request) {
-        final String sql = " UPDATE requests SET account_from = ?, account_to = ?, amount = ?, approve_request = ?,  request_status = ? WHERE request_id = ?; ";
-        request.setApprove(true);
-        request.setStatus("APPROVED");
-        jdbcTemplate.update(sql, request);
+    public void approve(Request request, int requestId) {
+        Request updated = this.getRequestById(requestId);
+        final String sql = " UPDATE requests SET request_date = ?, requester_account = ?, grantor_account = ?, amount = ?,  validated = ?,  request_status = ? WHERE request_id = ?; ";
+        updated.setValidate(true);
+        updated.setStatus("APPROVED");
+        jdbcTemplate.update(sql, updated.getRequestDate(), updated.getRequester(),
+                updated.getGrantor(), updated.getAmount(), updated.isValidate(), updated.getStatus(), requestId);
     }
 
     @Override
-    public void reject(Request request) {
-        final String sql = " UPDATE requests SET approve_request = ?, request_status = ? WHERE request_id = ?; ";
-        request.setApprove(false);
-        request.setStatus("REJECTED");
-        jdbcTemplate.update(sql, request);
+    public void reject(Request request, int requestId) {
+        Request updated = this.getRequestById(requestId);
+        final String sql = " UPDATE requests SET request_date = ?, requester_account = ?, grantor_account = ?, amount = ?,  validated = ?,  request_status = ? WHERE request_id = ?; ";
+        updated.setValidate(false);
+        updated.setStatus("REJECTED");
+        jdbcTemplate.update(sql, updated.getRequestDate(), updated.getRequester(),
+                updated.getGrantor(), updated.getAmount(), updated.isValidate(), updated.getStatus(), requestId);
     }
 
     private Request mapRowToRequest(SqlRowSet rs) {
@@ -85,10 +90,10 @@ public class JdbcRequestDao implements RequestDao {
 
         request.setRequestId(rs.getInt("request_id"));
         request.setRequestDate(rs.getTimestamp("request_date"));
-        request.setAccountFrom(rs.getInt("account_from"));
-        request.setAccountTo(rs.getInt("account_to"));
+        request.setRequester(rs.getInt("requester_account"));
+        request.setGrantor(rs.getInt("grantor_account"));
         request.setAmount(rs.getBigDecimal("amount"));
-        request.setApprove(rs.getBoolean("approve_request"));
+        request.setValidate(rs.getBoolean("validated"));
         request.setStatus(rs.getString("request_status"));
 
         return request;

@@ -2,13 +2,20 @@ package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class TransferDTO {
 
+  @NotNull
   private Long transferFrom;
+  @NotNull
   private Long transferTo;
+  @Positive
   private BigDecimal transferAmount;
 
-  public TransferDTO() {}
+  public TransferDTO() {
+  }
 
   public Long getTransferFrom() {
     return transferFrom;

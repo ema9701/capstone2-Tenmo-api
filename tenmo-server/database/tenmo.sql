@@ -37,10 +37,10 @@ CREATE TABLE transfers (
 CREATE TABLE requests (
 	request_id serial NOT NULL,
 	request_date timestamp NOT NULL DEFAULT NOW(),
-	account_from int NOT NULL,
-	account_to int NOT NULL,
+	requester_account int NOT NULL,
+	grantor_account int NOT NULL,
 	amount decimal (13, 2) NOT NULL,
--- 	approve_request boolean DEFAULT false,
+    validated boolean DEFAULT false,
 	request_status varchar,
 	CONSTRAINT PK_requests PRIMARY KEY (request_id)
 );
@@ -49,9 +49,9 @@ ADD CONSTRAINT FK_transfers_account_from FOREIGN KEY (account_from) REFERENCES a
 ALTER TABLE transfers
 ADD CONSTRAINT FK_transfers_account_to FOREIGN KEY (account_to) REFERENCES account(account_id);
 ALTER TABLE requests
-ADD CONSTRAINT FK_requests_account_from FOREIGN KEY (account_from) REFERENCES account(account_id);
+ADD CONSTRAINT FK_requests_requester_account FOREIGN KEY (requester_account) REFERENCES account(account_id);
 ALTER TABLE requests
-ADD CONSTRAINT FK_requests_account_to FOREIGN KEY (account_to) REFERENCES account(account_id);
+ADD CONSTRAINT FK_requests_grantor_account FOREIGN KEY (grantor_account) REFERENCES account(account_id);
 ALTER TABLE transfers
 ADD CONSTRAINT CK_transfers_amount CHECK(amount > 0);
 ALTER TABLE transfers
