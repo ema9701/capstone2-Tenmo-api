@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferDTO;
 
 public interface TransferDao {
 
@@ -13,8 +14,6 @@ public interface TransferDao {
 
     Transfer getTransferById(int transferId);
 
-    boolean createTransfer(Transfer newTransfer);
-
-    boolean testInsert(Long from, Long to, BigDecimal amount);
+    boolean postTransfer(TransferDTO transfer);
 
 }

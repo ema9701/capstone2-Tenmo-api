@@ -3,7 +3,6 @@ package com.techelevator.tenmo.model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -22,8 +21,7 @@ public class Transfer {
     public Transfer() {
     }
 
-    public Transfer(int transferId, Timestamp transferDate, int accountFrom, int accountTo, BigDecimal amount,
-            String status) {
+    public Transfer(int transferId, Timestamp transferDate, int accountFrom, int accountTo, BigDecimal amount, String status) {
         this.transferId = transferId;
         this.transferDate = transferDate;
         this.accountFrom = accountFrom;

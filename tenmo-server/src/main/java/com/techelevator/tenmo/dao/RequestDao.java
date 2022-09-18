@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.techelevator.tenmo.model.Request;
+import com.techelevator.tenmo.model.RequestDTO;
 
 public interface RequestDao {
 
@@ -13,10 +14,13 @@ public interface RequestDao {
 
     Request getRequestById(int requestId);
 
-    boolean createRequest(Request newRequest);
+    boolean postRequest(RequestDTO newRequest);
 
-    boolean updateRequest(Request request, int request_id);
+    void approve(Request request);
 
-    boolean test(Long from, Long to, BigDecimal amount);
+    void reject(Request request);
+
+
+
 
 }

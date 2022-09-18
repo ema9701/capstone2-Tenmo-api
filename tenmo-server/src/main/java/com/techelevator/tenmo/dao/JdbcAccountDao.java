@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
+import com.techelevator.tenmo.Exceptions.NegativeBalanceException;
 import com.techelevator.tenmo.model.Account;
 
 import org.springframework.dao.DataAccessException;
@@ -48,7 +49,8 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public int accountIdByUserName(String username) {
-        String sql = "SELECT account_id FROM account JOIN tenmo_user ON account.user_id = tenmo_user.user_id " +
+        String sql = "SELECT account_id FROM account " +
+                " JOIN tenmo_user ON account.user_id = tenmo_user.user_id " +
                 " WHERE username ILIKE ?;";
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, username);
         if (id != null) {
@@ -61,9 +63,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public int accountIdByUserId(Long userId) {
         String sql = " SELECT account_id FROM account WHERE user_id = ?; ";
-
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, userId);
-
         if (id != null) {
             return id;
         } else {
@@ -74,20 +74,18 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public boolean withdrawAmount(BigDecimal amount, int accountId) {
         if (!sufficientFunds(amount, accountId)) {
-            throw new InvalidMoneyWireException();
+            throw new NegativeBalanceException();
         } else {
             final String sql = " UPDATE account SET balance = balance - ? " +
                     " WHERE account_id = ?; ";
-
             return (jdbcTemplate.update(sql, amount, accountId) == 1);
         }
     }
 
     @Override
     public boolean depositAmount(BigDecimal amount, int accountId) {
-        final String sql = "UPDATE account SET balance = balance + ? " +
+        final String sql = " UPDATE account SET balance = balance + ? " +
                 " WHERE account_id = ?; ";
-
         return (jdbcTemplate.update(sql, amount, accountId) == 1);
     }
 
@@ -98,9 +96,7 @@ public class JdbcAccountDao implements AccountDao {
         if (fromAcc.getBalance().compareTo(amount) > 0) {
             final String SqlWithdraw = " UPDATE account set balance = balance + ? WHERE account_id = ?; ";
             final String SqlDeposit = " UPDATE account set balance = balance - ? WHERE account_id = ?; ";
-
         }
-
         return false;
     }
 
@@ -112,8 +108,8 @@ public class JdbcAccountDao implements AccountDao {
 
     private Account mapRowToAccount(SqlRowSet rowSet) {
         Account account = new Account();
-        account.setaccountId(rowSet.getInt("account_id"));
-        account.setuserId(rowSet.getLong("user_id"));
+        account.setAccountId(rowSet.getInt("account_id"));
+        account.setUserId(rowSet.getLong("user_id"));
         account.setBalance(rowSet.getBigDecimal("balance"));
         return account;
     }

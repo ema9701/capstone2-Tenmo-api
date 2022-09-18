@@ -5,9 +5,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.InvalidDataAccessApiUsageException;
+import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
+import com.techelevator.tenmo.model.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -57,63 +58,39 @@ public class RequestController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public Request postRequestTransfer(@Valid @RequestBody Request newRequest, Principal principal) {
-        Account requestor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
-
-        if (requestor.getaccountId() != newRequest.getAccountTo()
-                || requestor.getaccountId() == newRequest.getAccountFrom() ||
-                accountDao.findByAccountId(newRequest.getAccountFrom()) == null) {
-            throw new AccessDeniedException("Invalid request made");
+    public void postRequest(@Valid @RequestBody RequestDTO newRequest, Principal principal) {
+        User from = userDao.findByUsername(principal.getName());
+        User to = userDao.getUserById(newRequest.getRequestTo());
+        if (from.getId().equals(newRequest.getRequestTo())) {
+            throw new InvalidMoneyWireException();
         } else {
-            requestDao.createRequest(newRequest);
+            requestDao.postRequest(newRequest);
         }
-        return newRequest;
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{requestId}")
-    public boolean approveOrDenyRequest(@Valid @RequestBody Request request, @PathVariable int requestId,
-            Principal principal) {
-        Account grantor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
+    @PutMapping("/{requestId}/approve")
+    public void approve(@Valid @PathVariable int requestId, Principal principal) {
         Request requestToUpdate = requestDao.getRequestById(requestId);
-        if (requestToUpdate.getStatus().equals("PENDING") && request.getAccountFrom() == grantor.getaccountId()) {
-            requestDao.updateRequest(request, requestToUpdate.getRequestId());
-            if (request.isApproveRequest()) {
-                try {
-                    accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
-                    accountDao.depositAmount(request.getAmount(), request.getAccountTo());
-                } catch (ArithmeticException e) {
-                    System.out.println(e.getLocalizedMessage());
-                }
-            }
-            return true;
+        String status = requestToUpdate.getStatus();
+        Account grantor = accountDao.findAccountByUserId((long)userDao.findIdByUsername(principal.getName()));
+        if (grantor.getAccountId() == requestToUpdate.getAccountTo() && status.equalsIgnoreCase("PENDING")) {
+            requestDao.approve(requestToUpdate);
+            accountDao.withdrawAmount(requestToUpdate.getAmount(), requestToUpdate.getAccountTo());
+            accountDao.depositAmount(requestToUpdate.getAmount(), requestToUpdate.getAccountFrom());
         } else {
-            throw new AccessDeniedException("Cannot update a non-pending request");
+            throw new InvalidMoneyWireException();
         }
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("")
-    public void testRequest(@Valid @RequestBody RequestDTO newRequest, Principal principal) {
-
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{requestId}/reject")
+    public void reject(@Valid @PathVariable int requestId, Principal principal) {
+        Request requestToUpdate = requestDao.getRequestById(requestId);
+        String status = requestToUpdate.getStatus();
+        Account grantor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
+        if (grantor.getAccountId() == requestToUpdate.getAccountTo() && status.equalsIgnoreCase("PENDING")) {
+            requestDao.reject(requestToUpdate);
+        }
     }
-
 }
-
-// Account from = accountDao.findAccountByUserId((long)
-// userDao.findIdByUsername(principal.getName()));
-
-// if (from.getaccountId() != request.getAccountFrom() ||
-// accountDao.findByAccountId(request.getAccountTo()) == null) {
-// throw new AccessDeniedException("Invalid request made");
-// }
-
-// if (!request.isApproveRequest()) {
-// requestDao.updateRequest(request, requestId);
-// } else {
-// requestDao.updateRequest(request, requestId);
-// accountDao.withdrawAmount(request.getAmount(), request.getAccountFrom());
-// accountDao.depositAmount(request.getAmount(), request.getAccountTo());
-// }
-
-// return true;

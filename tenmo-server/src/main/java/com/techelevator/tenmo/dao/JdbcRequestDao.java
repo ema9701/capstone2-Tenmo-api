@@ -1,11 +1,12 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.RequestDTO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import com.techelevator.tenmo.model.Request;
-import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,18 +51,12 @@ public class JdbcRequestDao implements RequestDao {
     }
 
     @Override
-    public boolean createRequest(Request newRequest) {
-
-        final String sql = " INSERT INTO requests (account_from, account_to, amount, approve_request, request_status) "
-                +
-                " VALUES (?, ?, ?, ?, ?) RETURNING request_id; ";
-        newRequest.setStatus("PENDING");
+    public boolean postRequest(RequestDTO newRequest) {
+        final String Sql = " INSERT INTO requests (account_from, account_to, amount, request_status) " +
+                " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, 'PENDING') RETURNING request_id ";
         Integer newRequestId;
         try {
-            newRequestId = jdbcTemplate.queryForObject(sql, Integer.class, newRequest.getAccountFrom(),
-                    newRequest.getAccountTo(),
-                    newRequest.getAmount(), newRequest.isApproveRequest(), newRequest.getStatus());
-            newRequest.setRequestId(newRequestId);
+            newRequestId = jdbcTemplate.queryForObject(Sql, Integer.class, newRequest.getRequestFrom(), newRequest.getRequestTo(), newRequest.getRequestAmount());
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
@@ -70,30 +65,19 @@ public class JdbcRequestDao implements RequestDao {
     }
 
     @Override
-    public boolean test(Long from, Long to, BigDecimal amount) {
-        if (from != to) {
-            final String sql = " INSERT INTO requests (account_from, account_to, amount, approve_request, request_status) "
-                    +
-                    " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, ?, 'PENDING') RETURNING request_id; ";
-            return jdbcTemplate.update(sql, from, to, amount) == 1;
-        } else {
-            return false;
-        }
+    public void approve(Request request) {
+        final String sql = " UPDATE requests SET account_from = ?, account_to = ?, amount = ?, approve_request = ?,  request_status = ? WHERE request_id = ?; ";
+        request.setApprove(true);
+        request.setStatus("APPROVED");
+        jdbcTemplate.update(sql, request);
     }
 
     @Override
-    public boolean updateRequest(Request request, int requestId) {
-
-        final String sql = " UPDATE requests SET account_from = ?, account_to = ?, amount = ?, approve_request = ?, " +
-                " request_status = ? WHERE request_id = ?; ";
-        if (!request.isApproveRequest()) {
-            request.setStatus("REJECTED");
-        } else {
-            request.setStatus("APPROVED");
-        }
-        return (jdbcTemplate.update(sql, request.getAccountFrom(), request.getAccountTo(),
-                request.getAmount(), request.isApproveRequest(), request.getStatus(), requestId) == 1);
-
+    public void reject(Request request) {
+        final String sql = " UPDATE requests SET approve_request = ?, request_status = ? WHERE request_id = ?; ";
+        request.setApprove(false);
+        request.setStatus("REJECTED");
+        jdbcTemplate.update(sql, request);
     }
 
     private Request mapRowToRequest(SqlRowSet rs) {
@@ -104,7 +88,7 @@ public class JdbcRequestDao implements RequestDao {
         request.setAccountFrom(rs.getInt("account_from"));
         request.setAccountTo(rs.getInt("account_to"));
         request.setAmount(rs.getBigDecimal("amount"));
-        request.setApproveRequest(rs.getBoolean("approve_request"));
+        request.setApprove(rs.getBoolean("approve_request"));
         request.setStatus(rs.getString("request_status"));
 
         return request;

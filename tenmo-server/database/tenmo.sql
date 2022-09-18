@@ -36,11 +36,11 @@ CREATE TABLE transfers (
 );
 CREATE TABLE requests (
 	request_id serial NOT NULL,
-	request_date timestamp not null DEFAULT NOW(),
+	request_date timestamp NOT NULL DEFAULT NOW(),
 	account_from int NOT NULL,
 	account_to int NOT NULL,
 	amount decimal (13, 2) NOT NULL,
-	approve_request boolean,
+-- 	approve_request boolean DEFAULT false,
 	request_status varchar,
 	CONSTRAINT PK_requests PRIMARY KEY (request_id)
 );
@@ -64,6 +64,7 @@ ALTER TABLE requests
 ADD CONSTRAINT CK_requests_status CHECK (
 		request_status IN ('PENDING', 'APPROVED', 'REJECTED')
 	);
+
 INSERT INTO tenmo_user (username, password_hash)
 VALUES (
 		'user1',

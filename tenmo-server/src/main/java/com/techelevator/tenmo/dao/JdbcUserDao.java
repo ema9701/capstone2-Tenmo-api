@@ -28,7 +28,7 @@ public class JdbcUserDao implements UserDao {
     public List<User> listAll() {
         List<User> users = new ArrayList<>();
 
-        String sql = "SELECT * FROM tenmo_user; ";
+        String sql = " SELECT * FROM tenmo_user; ";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 
@@ -41,7 +41,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public User getUserById(Long userId) {
-        String sql = "SELECT * FROM tenmo_user WHERE user_id = ?; ";
+        String sql = " SELECT * FROM tenmo_user WHERE user_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         if (results.next()) {
             return mapRowToUser(results);
@@ -52,7 +52,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public int findIdByUsername(String username) {
-        String sql = "SELECT user_id FROM tenmo_user WHERE username ILIKE ?;";
+        String sql = " SELECT user_id FROM tenmo_user WHERE username ILIKE ?; ";
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, username);
         if (id != null) {
             return id;
@@ -76,7 +76,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean create(String username, String password) {
-        String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
+        String sql = " INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id; ";
         String password_hash = new BCryptPasswordEncoder().encode(password);
         Integer newUserId;
         try {
@@ -86,7 +86,7 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
 
-        String accountSql = "INSERT INTO account (user_id, balance) VALUES (?, 1000.00) RETURNING account_id";
+        String accountSql = " INSERT INTO account (user_id, balance) VALUES (?, 1000.00) RETURNING account_id; ";
         Integer accountId;
         try {
             accountId = jdbcTemplate.queryForObject(accountSql, Integer.class, newUserId);
@@ -99,7 +99,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public int changePassword(String newPassword, Long userId) {
-        String changedPasswordSql = "UPDATE tenmo_user SET password_hash = ? WHERE user_id = ?; ";
+        String changedPasswordSql = " UPDATE tenmo_user SET password_hash = ? WHERE user_id = ?; ";
         String password_hash = new BCryptPasswordEncoder().encode(newPassword);
         return jdbcTemplate.update(changedPasswordSql, password_hash, userId);
     }

@@ -2,8 +2,6 @@ package com.techelevator.tenmo.model;
 
 import java.sql.Timestamp;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -19,20 +17,20 @@ public class Request {
     private int accountTo;
     @Positive
     private BigDecimal amount;
-    private Boolean approveRequest;
+    private boolean approve;
     private String status;
 
     public Request() {
     }
 
-    public Request(int requestId, Timestamp requestDate, int accountFrom, int accountTo, BigDecimal amount,
-            Boolean approveRequest, String status) {
+    public Request(int requestId, Timestamp requestDate, int accountFrom, int accountTo, BigDecimal amount, boolean approve,
+                   String status) {
         this.requestId = requestId;
         this.requestDate = requestDate;
         this.accountFrom = accountFrom;
         this.accountTo = accountTo;
         this.amount = amount;
-        this.approveRequest = approveRequest;
+        this.approve = approve;
         this.status = status;
     }
 
@@ -76,12 +74,12 @@ public class Request {
         this.amount = amount;
     }
 
-    public Boolean isApproveRequest() {
-        return approveRequest;
+    public boolean isApprove() {
+        return approve;
     }
 
-    public void setApproveRequest(Boolean approveRequest) {
-        this.approveRequest = approveRequest;
+    public void setApprove(boolean approve) {
+        this.approve = approve;
     }
 
     public String getStatus() {

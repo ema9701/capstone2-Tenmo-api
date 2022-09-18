@@ -1,13 +1,13 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import com.techelevator.tenmo.model.Transfer;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +24,7 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public List<Transfer> listTransfers(Long userId) {
         List<Transfer> transferList = new ArrayList<>();
-
-        String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, transfer_status " +
+        final String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, transfer_status " +
                 " FROM TRANSFERS  " +
                 " JOIN account ON transfers.account_from = account.account_id " +
                 " OR (transfers.account_to = account.account_id) " +
@@ -42,8 +41,7 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
-
-        String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, transfer_status " +
+       final String sql = "SELECT transfer_id, transfer_date, account_from, account_to, amount, transfer_status " +
                 " FROM TRANSFERS " +
                 " WHERE transfer_id = ?; ";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, transferId);
@@ -55,33 +53,18 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public boolean createTransfer(Transfer newTransfer) {
-        String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
-                " VALUES (?, ?, ?, ?) RETURNING transfer_id; ";
-        newTransfer.setStatus("APPROVED");
+    public boolean postTransfer(TransferDTO transfer) {
+       final String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
+                " VALUES ((SELECT account_id FROM account WHERE user_id = ?), " +
+                " (SELECT account_id FROM account WHERE user_id = ?), ?, 'APPROVED') RETURNING transfer_id; ";
         Integer newTransferId;
         try {
-            newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, newTransfer.getAccountFrom(),
-                    newTransfer.getAccountTo(), newTransfer.getAmount(), newTransfer.getStatus());
-            newTransfer.setTransferId(newTransferId);
+            newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferFrom(), transfer.getTransferTo(), transfer.getTransferAmount());
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean testInsert(Long from, Long to, BigDecimal amount) {
-
-        if (from != to) {
-
-            String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
-                    " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, 'APPROVED'); ";
-            return jdbcTemplate.update(sql, from, to, amount) == 1;
-        } else {
-            return false;
-        }
     }
 
     private Transfer mapRowToTransfer(SqlRowSet rowSet) {

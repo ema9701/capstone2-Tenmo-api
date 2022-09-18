@@ -4,24 +4,24 @@ import java.math.BigDecimal;
 
 public class RequestDTO {
 
-  private Long requestFromId;
-  private Long requestToId;
+  private Long requestFrom;
+  private Long requestTo;
   private BigDecimal requestAmount;
 
-  public Long getRequestFromId() {
-    return this.requestFromId;
+  public Long getRequestFrom() {
+    return this.requestFrom;
   }
 
-  public void setRequestFromId(Long requestFromId) {
-    this.requestFromId = requestFromId;
+  public void setRequestFrom(Long requestFrom) {
+    this.requestFrom = requestFrom;
   }
 
-  public Long getRequestToId() {
-    return this.requestToId;
+  public Long getRequestTo() {
+    return this.requestTo;
   }
 
-  public void setRequestToId(Long requestToId) {
-    this.requestToId = requestToId;
+  public void setRequestTo(Long requestTo) {
+    this.requestTo = requestTo;
   }
 
   public BigDecimal getRequestAmount() {
