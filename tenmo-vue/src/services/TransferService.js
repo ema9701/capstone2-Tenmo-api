@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default {
 
-  listTranxByUserId(userId) {
+  listTransfersByUserId(userId) {
     return axios.get(`/transfer/${userId}`);
   },
 
@@ -14,7 +14,5 @@ export default {
     return axios.post(`/transfer`, transfer);
   },
 
-  test(transfer) {
-    return axios.post(`/transfer/test`, transfer); 
-  }
+
 }

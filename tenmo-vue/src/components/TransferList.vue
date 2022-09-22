@@ -63,7 +63,7 @@
 		},
 		methods: {
 			listTransfers(userId) {
-				transferService.listTranxByUserId(userId).then((response) => {
+				transferService.listTransfersByUserId(userId).then((response) => {
 					this.transfers = response.data;
 				});
 			},

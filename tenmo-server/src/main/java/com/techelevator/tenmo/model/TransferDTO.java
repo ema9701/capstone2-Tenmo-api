@@ -7,37 +7,37 @@ import javax.validation.constraints.Positive;
 
 public class TransferDTO {
 
-  @NotNull
-  private Long transferFrom;
-  @NotNull
-  private Long transferTo;
-  @Positive
-  private BigDecimal transferAmount;
+    @NotNull
+    private Long transferFrom;
+    @NotNull
+    private Long transferTo;
+    @Positive
+    private BigDecimal transferAmount;
 
-  public TransferDTO() {
-  }
+    public TransferDTO() {
+    }
 
-  public Long getTransferFrom() {
-    return transferFrom;
-  }
+    public Long getTransferFrom() {
+        return transferFrom;
+    }
 
-  public void setTransferFrom(Long transferFrom) {
-    this.transferFrom = transferFrom;
-  }
+    public void setTransferFrom(Long transferFrom) {
+        this.transferFrom = transferFrom;
+    }
 
-  public Long getTransferTo() {
-    return transferTo;
-  }
+    public Long getTransferTo() {
+        return transferTo;
+    }
 
-  public void setTransferTo(Long transferTo) {
-    this.transferTo = transferTo;
-  }
+    public void setTransferTo(Long transferTo) {
+        this.transferTo = transferTo;
+    }
 
-  public BigDecimal getTransferAmount() {
-    return transferAmount;
-  }
+    public BigDecimal getTransferAmount() {
+        return transferAmount;
+    }
 
-  public void setTransferAmount(BigDecimal transferAmount) {
-    this.transferAmount = transferAmount;
-  }
+    public void setTransferAmount(BigDecimal transferAmount) {
+        this.transferAmount = transferAmount;
+    }
 }

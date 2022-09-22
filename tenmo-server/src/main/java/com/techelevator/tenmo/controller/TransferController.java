@@ -47,7 +47,7 @@ public class TransferController {
 
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/testing")
+    @PostMapping("")
     public void postTransfer(@Valid @RequestBody TransferDTO newTransfer, Principal principal) {
         User from = userDao.findByUsername(principal.getName());
         Account sender = accountDao.findAccountByUserId(from.getId());

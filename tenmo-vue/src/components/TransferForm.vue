@@ -8,8 +8,8 @@
 					label="Your UserId*"
 					type="number"
 					required
-					v-model.number="transfer.userFromId"
-					@change="getAccountFrom(this.currentUserId)"
+					v-model.number="transfer.transferFrom"
+					v-bind="account.userId"
 				></v-text-field>
 			</template>
 			<template v-slot:toId>
@@ -17,7 +17,7 @@
 					label="Recipient UserId*"
 					required
 					type="number"
-					v-model.number="transfer.userToId"
+					v-model.number="transfer.transferTo"
 				></v-text-field>
 			</template>
 			<template v-slot:cash>
@@ -30,7 +30,7 @@
 			</template>
 			<template v-slot: extra>extra</template>
 			<template v-slot:send-btn>
-				<v-btn color="blue-darken-1" text type="submit" @click.prevent="test()">
+				<v-btn color="blue-darken-1" text type="submit" @click.prevent="wireTransfer()">
 					Send
 				</v-btn>
 			</template>
@@ -49,74 +49,51 @@
 		data() {
 			return {
 				dialog: false,
-
 				transfer: {
-					userFromId: "",
-					userToId: "",
+					transferFrom: "",
+					transferTo: "",
 					transferAmount: "",
 				},
-				recipientId: "",
 				errorMsg: "",
 				account: {},
 			};
 		},
 		created() {
-			this.getAccountFrom(this.currentUserId);
+			this.principalAccount(this.currentUserId);
 		},
 		methods: {
-			getRecipientAccId(userId) {
-				accountService.getAcctIdByUserId(userId).then((response) => {
-					this.recipientId = response.data;
-					console.log(this.transfer.accountTo);
-				});
-			},
-			getAccountFrom(userId) {
-				accountService.getAcctIdByUserId(userId).then((response) => {
+			principalAccount(userId) {
+				accountService.getAccountByUserId(userId).then((response) => {
 					this.account = response.data;
 					console.log(this.transfer.accountFrom);
 				});
 			},
-			wireMoney() {
+			wireTransfer() {
 				console.log(this.transfer.accountFrom);
 				console.log(this.transfer.accountTo);
 				console.log(this.transfer.amount);
-				transferService
-					.postTransfer(this.transfer)
-					.then((response) => {
-						if (response.status === 201) {
-							alert("Transaction Processed!");
-						}
-					})
-					.catch((error) => {
+				transferService.postTransfer(this.transfer).then((response) => {
+					if (response.status === 201) {
+						alert("Transfer processed!");
+					}
+				}).catch((error) => {
 						this.handleErrorResponse(error, "submitting");
 					});
 			},
-			handleErrorResponse(error, verb) {
-				if (error.response) {
-					this.errorMsg =
+				handleErrorResponse(error, verb) {
+					if (error.response) {
+						this.errorMsg =
 						"Error " +
-						verb +
-						" application. Response received was " +
-						error.response.status +
-						" .";
+						verb + " application. Response received was " +
+						error.response.status + " .";
 				} else if (error.request) {
 					this.errorMsg =
-						"Error " + verb + " application. Server could not be reached.";
+					"Error " + verb + " application. Server could not be reached.";
 				} else {
 					this.errorMsg =
-						"Error " + verb + " application. Request could not be created";
+					"Error " + verb + " application. Request could not be created";
 				}
-			},
-			test() {
-				console.log(this.transfer.accountFrom);
-				console.log(this.transfer.accountTo);
-				console.log(this.transfer.amount);
-				transferService.test(this.transfer).then((response) => {
-					if (response.status === 201) {
-						alert("It worked");
-					}
-				});
-			},
+			},	
 		},
 		computed: {
 			currentUserId() {
