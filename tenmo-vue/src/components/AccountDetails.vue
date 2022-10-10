@@ -1,6 +1,6 @@
 <template>
 	<div class="panel">
-		<div class="panel-head">
+		<!-- <div class="panel-head">
 			<h3>Account List</h3>
 		</div>
 		<div class="panel-content">
@@ -26,7 +26,26 @@
 				</table>
 			</div>
 		</div>
-		<div class="panel-footer"></div>
+		<div class="panel-footer"></div> -->	
+	<v-container>
+		<div class="d-flex align-center flex-column">
+			<v-card width="400"
+			title="Current Account"
+			class="text-center"
+			>
+				<v-card-text class="text-center"> 
+					<ul class="details">
+						<li>Account Number: {{account.accountId}}</li>
+						<li>User Id: {{account.userId}}</li>
+						<li>Balance: ${{account.balance}}</li>
+					</ul>
+				</v-card-text>
+				<v-card-actions>
+					<v-btn class="align-center">Recent Transactions</v-btn>
+				</v-card-actions>
+			</v-card>
+		</div>
+	</v-container>
 	</div>
 </template>
 
@@ -41,7 +60,7 @@
 			};
 		},
 		created() {
-			this.getAccount(this.userId);
+			this.getAccount(this.currentUserId);
 		},
 		methods: {
 			getAccount(userId) {
@@ -51,7 +70,7 @@
 			},
 		},
 		computed: {
-			userId() {
+			currentUserId() {
 				return this.$store.state.user.id;
 			},
 		},
@@ -59,7 +78,7 @@
 </script>
 
 <style scoped>
-	.panel {
+	/* .panel {
 		border-radius: 3px;
 		border-width: thin;
 		border-style: solid;
@@ -73,5 +92,9 @@
 	#account-wrapper {
 		border-top-style: solid;
 		border-width: thin;
+	} */
+	.details {
+		list-style: none;
+
 	}
 </style>

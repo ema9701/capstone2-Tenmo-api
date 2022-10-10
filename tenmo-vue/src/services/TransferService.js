@@ -13,6 +13,4 @@ export default {
   postTransfer(transfer) {
     return axios.post(`/transfer`, transfer);
   },
-
-
 }

@@ -10,6 +10,7 @@
 				<v-card>
 					<v-card-title>
 						<span class="text-h5">
+							<slot name="alert-popup"></slot>
 							<slot name="formTitle">Form type</slot>
 						</span>
 					</v-card-title>

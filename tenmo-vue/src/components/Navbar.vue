@@ -19,7 +19,7 @@
 				<v-list-item prepend-icon="mdi-cash">
 					<v-btn flat
 						><router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
-							>Send Transfer</router-link
+							>Wire Money</router-link
 						></v-btn
 					></v-list-item
 				>
@@ -27,6 +27,13 @@
 					><v-btn flat
 						><router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
 							>View Transfers</router-link
+						></v-btn
+					></v-list-item
+				>
+					<v-list-item prepend-icon="mdi-text-search"
+					><v-btn flat
+						><router-link class="rlink" v-bind:to="{ name: 'request-list' }"
+							>View Requests</router-link
 						></v-btn
 					></v-list-item
 				>

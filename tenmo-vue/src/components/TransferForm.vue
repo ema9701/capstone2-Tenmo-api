@@ -1,6 +1,10 @@
 <template>
 	<div id="transfer-container">
-		<form-template>
+		<form-template> 
+			<template v-slot:alert-popup>
+				<v-alert type="error" v-if="invalidMoneyWire">Something went wrong!</v-alert> 
+				<v-alert type="success" v-if="processedTransfer">Transfer processed!</v-alert>
+			</template>
 			<template v-slot:dialogBtn> Transfer </template>
 			<template v-slot:formTitle> Transfer Form </template>
 			<template v-slot:fromId>
@@ -55,6 +59,8 @@
 					transferAmount: "",
 				},
 				errorMsg: "",
+				invalidMoneyWire: false,  
+				processedTransfer: false,
 				account: {},
 			};
 		},
@@ -65,19 +71,17 @@
 			principalAccount(userId) {
 				accountService.getAccountByUserId(userId).then((response) => {
 					this.account = response.data;
-					console.log(this.transfer.accountFrom);
 				});
 			},
 			wireTransfer() {
-				console.log(this.transfer.accountFrom);
-				console.log(this.transfer.accountTo);
-				console.log(this.transfer.amount);
 				transferService.postTransfer(this.transfer).then((response) => {
 					if (response.status === 201) {
-						alert("Transfer processed!");
+						this.processedTransfer = true; 
+						// alert("Transfer processed!");
 					}
 				}).catch((error) => {
-						this.handleErrorResponse(error, "submitting");
+						this.handleErrorResponse(error, "submitting"); 
+						this.invalidMoneyWire = true; 
 					});
 			},
 				handleErrorResponse(error, verb) {

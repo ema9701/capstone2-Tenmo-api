@@ -14,8 +14,12 @@ export default {
     return axios.post(`/request`, request); 
   }, 
 
-  approveOrDenyRequest(request, requestId) {
-    return axios.put(`/request/${requestId}`, request); 
+  approveRequest(requestId) {
+    return axios.put(`/request/${requestId}/approve`);
+  },
+
+  rejectRequest(requestId) {
+    return axios.put(`/request/${requestId}/reject`);
   }
 
 }

@@ -8,6 +8,7 @@ import SelectUserView from "@/views/SelectUserView";
 import SelectUsers from "@/components/SelectUsers";
 import WireMoney from "@/components/WireMoney";
 import TransferList from "@/components/TransferList";
+import RequestList from "@/components/RequestList";
 import store from "@/store/index";
 
 const routes = [
@@ -88,6 +89,14 @@ const routes = [
 	path: '/transfers/',
 	name: 'transfer-list',
 	component: TransferList,
+	meta: {
+		requiresAuth: true, 
+	}
+},
+{
+	path: '/requests/',
+	name: 'request-list',
+	component: RequestList,
 	meta: {
 		requiresAuth: true, 
 	}
