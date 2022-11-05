@@ -1,47 +1,55 @@
 package com.techelevator.tenmo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class RequestDTO {
 
-  private Long requesterId;
-  private Long grantorId;
-  private BigDecimal requestAmount;
-//  @JsonIgnore
-//  private boolean validate;
+    @NotNull
+    @JsonProperty("requester")
+    private Long requesterId;
+    @NotNull
+    @JsonProperty("grantor")
+    private Long grantorId;
+    @DecimalMin(value = "1.00")
+    @JsonProperty("amount")
+    private BigDecimal requestAmount;
 
-  public Long getRequesterId() {
-    return this.requesterId;
-  }
+    public RequestDTO() {
+    }
 
-  public void setRequesterId(Long requesterId) {
-    this.requesterId = requesterId;
-  }
+    public RequestDTO(Long requesterId, Long grantorId, BigDecimal requestAmount) {
+        this.requesterId = requesterId;
+        this.grantorId = grantorId;
+        this.requestAmount = requestAmount;
+    }
 
-  public Long getGrantorId() {
-    return this.grantorId;
-  }
+    public Long getRequesterId() {
+        return this.requesterId;
+    }
 
-  public void setGrantorId(Long grantorId) {
-    this.grantorId = grantorId;
-  }
+    public void setRequesterId(Long requesterId) {
+        this.requesterId = requesterId;
+    }
 
-  public BigDecimal getRequestAmount() {
-    return this.requestAmount;
-  }
+    public Long getGrantorId() {
+        return this.grantorId;
+    }
 
-  public void setRequestAmount(BigDecimal requestAmount) {
-    this.requestAmount = requestAmount;
-  }
-//
-//  public boolean isValidate() {
-//    return validate;
-//  }
-//
-//  public void setValidate(boolean validate) {
-//    this.validate = validate;
-//  }
+    public void setGrantorId(Long grantorId) {
+        this.grantorId = grantorId;
+    }
+
+    public BigDecimal getRequestAmount() {
+        return this.requestAmount;
+    }
+
+    public void setRequestAmount(BigDecimal requestAmount) {
+        this.requestAmount = requestAmount;
+    }
 
 }

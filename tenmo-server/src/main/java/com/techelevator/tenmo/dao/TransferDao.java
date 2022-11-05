@@ -14,6 +14,6 @@ public interface TransferDao {
 
     Transfer getTransferById(int transferId);
 
-    boolean postTransfer(TransferDTO transfer);
+    Integer postTransfer(TransferDTO transfer);
 
 }

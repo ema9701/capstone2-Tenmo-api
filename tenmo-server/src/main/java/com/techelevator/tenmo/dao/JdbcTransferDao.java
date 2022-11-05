@@ -53,18 +53,18 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public boolean postTransfer(TransferDTO transfer) {
-       final String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount, transfer_status) " +
+    public Integer postTransfer(TransferDTO transfer) {
+       final String sql = " INSERT INTO TRANSFERS (account_from, account_to, amount) " +
                 " VALUES ((SELECT account_id FROM account WHERE user_id = ?), " +
-                " (SELECT account_id FROM account WHERE user_id = ?), ?, 'APPROVED') RETURNING transfer_id; ";
+                " (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING transfer_id; ";
         Integer newTransferId;
         try {
             newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferFrom(), transfer.getTransferTo(), transfer.getTransferAmount());
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
-            return false;
+            return -1;
         }
-        return true;
+        return newTransferId;
     }
 
     private Transfer mapRowToTransfer(SqlRowSet rowSet) {

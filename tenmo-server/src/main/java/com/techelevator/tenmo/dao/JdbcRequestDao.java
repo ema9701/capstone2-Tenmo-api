@@ -24,7 +24,7 @@ public class JdbcRequestDao implements RequestDao {
         List<Request> requests = new ArrayList<>();
 
         final String sql = " SELECT request_id, request_date, requester_account, grantor_account, amount, " +
-                " validated, request_status FROM requests " +
+                " request_status FROM requests " +
                 " JOIN account ON requests.requester_account = account.account_id " +
                 " OR (requests.grantor_account = account.account_id) " +
                 " WHERE user_id = ?; ";
@@ -39,9 +39,8 @@ public class JdbcRequestDao implements RequestDao {
     @Override
     public Request getRequestById(int requestId) {
         Request request = null;
-
         final String sql = " SELECT request_id, request_date, requester_account, grantor_account, amount, " +
-                " validated, request_status FROM requests " +
+                " request_status FROM requests " +
                 " WHERE request_id = ?; ";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, requestId);
         if (result.next()) {
@@ -52,8 +51,8 @@ public class JdbcRequestDao implements RequestDao {
 
     @Override
     public boolean postRequest(RequestDTO newRequest) {
-        final String Sql = " INSERT INTO requests (requester_account, grantor_account, amount, request_status) " +
-                " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?, 'PENDING') RETURNING request_id ";
+        final String Sql = " INSERT INTO requests (requester_account, grantor_account, amount) " +
+                " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING request_id ";
         Integer newRequestId;
         try {
             newRequestId = jdbcTemplate.queryForObject(Sql, Integer.class, newRequest.getRequesterId(),
@@ -66,36 +65,21 @@ public class JdbcRequestDao implements RequestDao {
     }
 
     @Override
-    public void approve(Request request, int requestId) {
-        Request updated = this.getRequestById(requestId);
-        final String sql = " UPDATE requests SET request_date = ?, requester_account = ?, grantor_account = ?, amount = ?,  validated = ?,  request_status = ? WHERE request_id = ?; ";
-        updated.setValidate(true);
-        updated.setStatus("APPROVED");
-        jdbcTemplate.update(sql, updated.getRequestDate(), updated.getRequester(),
-                updated.getGrantor(), updated.getAmount(), updated.isValidate(), updated.getStatus(), requestId);
-    }
-
-    @Override
-    public void reject(Request request, int requestId) {
-        Request updated = this.getRequestById(requestId);
-        final String sql = " UPDATE requests SET request_date = ?, requester_account = ?, grantor_account = ?, amount = ?,  validated = ?,  request_status = ? WHERE request_id = ?; ";
-        updated.setValidate(false);
-        updated.setStatus("REJECTED");
-        jdbcTemplate.update(sql, updated.getRequestDate(), updated.getRequester(),
-                updated.getGrantor(), updated.getAmount(), updated.isValidate(), updated.getStatus(), requestId);
+    public void updateStatus(Request request, int requestId) {
+        final String sql = " UPDATE requests SET request_date = ?, requester_account = ?, " +
+                " grantor_account = ?, amount = ?, request_status = ? WHERE request_id = ?; ";
+        jdbcTemplate.update(sql, request.getRequestDate(), request.getRequester(), request.getGrantor(),
+                request.getAmount(), request.getStatus(), request.getRequestId());
     }
 
     private Request mapRowToRequest(SqlRowSet rs) {
         Request request = new Request();
-
         request.setRequestId(rs.getInt("request_id"));
         request.setRequestDate(rs.getTimestamp("request_date"));
         request.setRequester(rs.getInt("requester_account"));
         request.setGrantor(rs.getInt("grantor_account"));
         request.setAmount(rs.getBigDecimal("amount"));
-        request.setValidate(rs.getBoolean("validated"));
         request.setStatus(rs.getString("request_status"));
-
         return request;
     }
 }

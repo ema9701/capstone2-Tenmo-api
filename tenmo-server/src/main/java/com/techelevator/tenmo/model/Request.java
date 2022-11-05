@@ -1,7 +1,10 @@
 package com.techelevator.tenmo.model;
 
+import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
+
 import java.sql.Timestamp;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -15,23 +18,23 @@ public class Request {
     private int requester;
     @NotNull
     private int grantor;
-    @Positive
+    @DecimalMin(value = "1.00")
     private BigDecimal amount;
-    private boolean validate;
+    @NotNull
     private String status;
+
+    public static final String[] STATUS_TEXT = {"PENDING", "APPROVED", "REJECTED"};
 
     public Request() {
     }
 
-    public Request(int requestId, Timestamp requestDate, int requester, int accountTo, BigDecimal amount, boolean validate,
-                   String status) {
+    public Request(int requestId, Timestamp requestDate, int requester, int accountTo, BigDecimal amount) {
         this.requestId = requestId;
         this.requestDate = requestDate;
         this.requester = requester;
         this.grantor = accountTo;
         this.amount = amount;
-        this.validate = validate;
-        this.status = status;
+        this.status = STATUS_TEXT[0];
     }
 
     public int getRequestId() {
@@ -74,14 +77,6 @@ public class Request {
         this.amount = amount;
     }
 
-    public boolean isValidate() {
-        return validate;
-    }
-
-    public void setValidate(boolean validate) {
-        this.validate = validate;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -90,4 +85,17 @@ public class Request {
         this.status = status;
     }
 
+    public boolean isValid() {
+        return getStatus().equals(STATUS_TEXT[0]);
+    }
+
+    public void finalizeRequest(boolean approve) {
+        if (this.isValid() && approve) {
+            this.setStatus(STATUS_TEXT[1]);
+        } else if (this.isValid() && !approve) {
+            this.setStatus(STATUS_TEXT[2]);
+        } else {
+            throw new InvalidMoneyWireException();
+        }
+    }
 }

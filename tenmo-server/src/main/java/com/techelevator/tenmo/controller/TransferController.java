@@ -18,10 +18,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-@PreAuthorize("isAuthenticated()")
-@RequestMapping("/transfer")
 @RestController
 @CrossOrigin
+@PreAuthorize("isAuthenticated()")
+@RequestMapping("/transfer")
 public class TransferController {
 
     private UserDao userDao;
@@ -45,22 +45,18 @@ public class TransferController {
         return transferDao.getTransferById(transferId);
     }
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public void postTransfer(@Valid @RequestBody TransferDTO newTransfer, Principal principal) {
+    public Transfer postTransfer(@Valid @RequestBody TransferDTO newTransfer, Principal principal) {
         User from = userDao.findByUsername(principal.getName());
         Account sender = accountDao.findAccountByUserId(from.getId());
         User to = userDao.getUserById(newTransfer.getTransferTo());
         Account recipient = accountDao.findAccountByUserId(to.getId());
-
         if (sender.getUserId().equals(recipient.getUserId())) {
             throw new InvalidMoneyWireException();
-        } else {
-            transferDao.postTransfer(newTransfer);
-            accountDao.withdrawAmount(newTransfer.getTransferAmount(), sender.getAccountId());
-            accountDao.depositAmount(newTransfer.getTransferAmount(), recipient.getAccountId());
-
         }
+        Integer newId = transferDao.postTransfer(newTransfer);
+        accountDao.transact(newTransfer.getTransferAmount(), sender.getAccountId(), recipient.getAccountId());
+        return transferDao.getTransferById(newId);
     }
 }

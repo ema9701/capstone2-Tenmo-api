@@ -1,17 +1,23 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.User;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@PreAuthorize("isAuthenticated()")
+import java.security.Principal;
+
+
 @RestController
-@RequestMapping("/account")
 @CrossOrigin
+@PreAuthorize("isAuthenticated()")
+@RequestMapping("/account")
 public class AccountController {
 
     private AccountDao accountDao;
+    private UserDao userDao;
 
     public AccountController(AccountDao accountDao) {
         this.accountDao = accountDao;
@@ -19,7 +25,7 @@ public class AccountController {
     }
 
     @GetMapping(path = "/userid/{userId}")
-    public Account accountByUserId(@PathVariable Long userId) {
+    public Account accountByUserId(@PathVariable Long userId, Principal principal) {
         return accountDao.findAccountByUserId(userId);
     }
 
@@ -29,7 +35,7 @@ public class AccountController {
     }
 
     @GetMapping(path = "/idbyname/{username}")
-    public int accountIdByUserName(@PathVariable String username) {
+    public int accountIdByUserName(@PathVariable String username, Principal principal) {
         return accountDao.accountIdByUserName(username);
     }
 

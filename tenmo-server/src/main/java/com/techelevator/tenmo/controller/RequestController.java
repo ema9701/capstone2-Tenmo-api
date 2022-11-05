@@ -9,15 +9,7 @@ import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
 import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.RequestDao;
@@ -67,28 +59,20 @@ public class RequestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{requestId}/approve")
-    public void approve(@Valid @PathVariable int requestId, Principal principal) {
-        Request requestToUpdate = requestDao.getRequestById(requestId);
-        String status = requestToUpdate.getStatus();
-        Account grantor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
-        if (grantor.getAccountId() == requestToUpdate.getGrantor() && status.equalsIgnoreCase("PENDING")) {
-            requestDao.approve(requestToUpdate, requestId);
-            accountDao.withdrawAmount(requestToUpdate.getAmount(), requestToUpdate.getGrantor());
-            accountDao.depositAmount(requestToUpdate.getAmount(), requestToUpdate.getRequester());
-        } else {
-            throw new InvalidMoneyWireException();
-        }
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{requestId}/reject")
-    public void reject(@Valid @PathVariable int requestId, Principal principal) {
-        Request requestToUpdate = requestDao.getRequestById(requestId);
-        String status = requestToUpdate.getStatus();
-        Account grantor = accountDao.findAccountByUserId((long) userDao.findIdByUsername(principal.getName()));
-        if (grantor.getAccountId() == requestToUpdate.getGrantor() && status.equalsIgnoreCase("PENDING")) {
-            requestDao.reject(requestToUpdate, requestId);
+    @PutMapping("/{requestId}")
+    public void updateStatus(@PathVariable int requestId, @RequestParam boolean approve, Principal principal) {
+        User to = userDao.findByUsername(principal.getName());
+        Account grantor = accountDao.findAccountByUserId(to.getId());
+        Request updatedRequest = requestDao.getRequestById(requestId);
+        if (updatedRequest != null && grantor.getAccountId() == updatedRequest.getGrantor()) {
+            if (approve) {
+                updatedRequest.finalizeRequest(true);
+                requestDao.updateStatus(updatedRequest, updatedRequest.getRequestId());
+                accountDao.transact(updatedRequest.getAmount(), updatedRequest.getGrantor(), updatedRequest.getRequester());
+            } else {
+                updatedRequest.finalizeRequest(false);
+                requestDao.updateStatus(updatedRequest, updatedRequest.getRequestId());
+            }
         } else {
             throw new InvalidMoneyWireException();
         }

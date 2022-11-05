@@ -3,6 +3,7 @@ package com.techelevator.tenmo.model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -14,21 +15,22 @@ public class Transfer {
     private int accountFrom;
     @NotNull
     private int accountTo;
-    @Positive
+    @DecimalMin(value = "1.00")
     private BigDecimal amount;
     private String status;
+
+    public static final String[] STATUS_TEXT = {"PENDING", "APPROVED", "REJECTED"};
 
     public Transfer() {
     }
 
-    public Transfer(int transferId, Timestamp transferDate, int accountFrom, int accountTo, BigDecimal amount,
-            String status) {
+    public Transfer(int transferId, Timestamp transferDate, int accountFrom, int accountTo, BigDecimal amount) {
         this.transferId = transferId;
         this.transferDate = transferDate;
         this.accountFrom = accountFrom;
         this.accountTo = accountTo;
         this.amount = amount;
-        this.status = status;
+        this.status = STATUS_TEXT[1];
     }
 
     public int getTransferId() {

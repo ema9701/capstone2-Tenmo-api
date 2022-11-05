@@ -1,6 +1,5 @@
 package com.techelevator.tenmo.dao;
 
-import com.techelevator.tenmo.Exceptions.InvalidMoneyWireException;
 import com.techelevator.tenmo.Exceptions.NegativeBalanceException;
 import com.techelevator.tenmo.model.Account;
 
@@ -41,7 +40,7 @@ public class JdbcAccountDao implements AccountDao {
                 " WHERE user_id = ?; ";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
 
-        while (results.next()) {
+        if (results.next()) {
             account = mapRowToAccount(results);
         }
         return account;
@@ -72,32 +71,20 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public boolean withdrawAmount(BigDecimal amount, int accountId) {
-        if (!sufficientFunds(amount, accountId)) {
-            throw new NegativeBalanceException();
-        } else {
-            final String sql = " UPDATE account SET balance = balance - ? " +
-                    " WHERE account_id = ?; ";
-            return (jdbcTemplate.update(sql, amount, accountId) == 1);
-        }
-    }
-
-    @Override
-    public boolean depositAmount(BigDecimal amount, int accountId) {
-        final String sql = " UPDATE account SET balance = balance + ? " +
-                " WHERE account_id = ?; ";
-        return (jdbcTemplate.update(sql, amount, accountId) == 1);
-    }
-
-    @Override
-    public boolean transact(BigDecimal amount, int from, int to) throws ArithmeticException {
-        Account fromAcc = findByAccountId(from);
-        Account toAcc = findByAccountId(to);
-        if (fromAcc.getBalance().compareTo(amount) > 0) {
-            final String SqlWithdraw = " UPDATE account set balance = balance + ? WHERE account_id = ?; ";
-            final String SqlDeposit = " UPDATE account set balance = balance - ? WHERE account_id = ?; ";
-        }
-        return false;
+    public void transact(BigDecimal amount, int from, int to) throws NegativeBalanceException, DataAccessException {
+        Account fromAcc = this.findByAccountId(from);
+        Account toAcc = this.findByAccountId(to);
+        if (fromAcc != null && toAcc != null)
+            if (sufficientFunds(amount, from)) {
+                try {
+                    final String SqlWithdraw = " UPDATE account set balance = balance - ? WHERE account_id = ?; ";
+                    jdbcTemplate.update(SqlWithdraw, amount, fromAcc.getAccountId());
+                    final String SqlDeposit = " UPDATE account set balance = balance + ? WHERE account_id = ?; ";
+                    jdbcTemplate.update(SqlDeposit, amount, toAcc.getAccountId());
+                } catch (NegativeBalanceException | DataAccessException ae) {
+                    System.out.println(ae.getLocalizedMessage());
+                }
+            }
     }
 
     @Override
