@@ -50,13 +50,13 @@ public class TransferController {
     public Transfer postTransfer(@Valid @RequestBody TransferDTO newTransfer, Principal principal) {
         User from = userDao.findByUsername(principal.getName());
         Account sender = accountDao.findAccountByUserId(from.getId());
-        User to = userDao.getUserById(newTransfer.getTransferTo());
+        User to = userDao.getUserById(newTransfer.getReceivableUserId());
         Account recipient = accountDao.findAccountByUserId(to.getId());
         if (sender.getUserId().equals(recipient.getUserId())) {
             throw new InvalidMoneyWireException();
         }
         Integer newId = transferDao.postTransfer(newTransfer);
-        accountDao.transact(newTransfer.getTransferAmount(), sender.getAccountId(), recipient.getAccountId());
+        accountDao.transact(newTransfer.getAmount(), sender.getAccountId(), recipient.getAccountId());
         return transferDao.getTransferById(newId);
     }
 }

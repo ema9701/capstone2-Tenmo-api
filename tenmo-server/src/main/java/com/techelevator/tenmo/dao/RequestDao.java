@@ -14,11 +14,7 @@ public interface RequestDao {
 
     Request getRequestById(int requestId);
 
-    boolean postRequest(RequestDTO newRequest);
-
-//    void approve(Request request, int requestId);
-//
-//    void reject(Request request, int request_id);
+    Integer postRequest(RequestDTO newRequest);
 
     void updateStatus(Request request, int requestId);
 

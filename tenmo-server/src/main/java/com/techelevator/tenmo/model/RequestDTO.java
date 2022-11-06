@@ -1,6 +1,5 @@
 package com.techelevator.tenmo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.DecimalMin;
@@ -10,46 +9,46 @@ import java.math.BigDecimal;
 public class RequestDTO {
 
     @NotNull
-    @JsonProperty("requester")
-    private Long requesterId;
+    @JsonProperty("from")
+    private Long receivableUserId;
     @NotNull
-    @JsonProperty("grantor")
-    private Long grantorId;
+    @JsonProperty("to")
+    private Long payableUserId;
     @DecimalMin(value = "1.00")
     @JsonProperty("amount")
-    private BigDecimal requestAmount;
+    private BigDecimal amount;
 
     public RequestDTO() {
     }
 
-    public RequestDTO(Long requesterId, Long grantorId, BigDecimal requestAmount) {
-        this.requesterId = requesterId;
-        this.grantorId = grantorId;
-        this.requestAmount = requestAmount;
+    public RequestDTO(Long receivableUserId, Long payableUserId, BigDecimal amount) {
+        this.receivableUserId = receivableUserId;
+        this.payableUserId = payableUserId;
+        this.amount = amount;
     }
 
-    public Long getRequesterId() {
-        return this.requesterId;
+    public Long getReceivableUserId() {
+        return this.receivableUserId;
     }
 
-    public void setRequesterId(Long requesterId) {
-        this.requesterId = requesterId;
+    public void setReceivableUserId(Long receivableUserId) {
+        this.receivableUserId = receivableUserId;
     }
 
-    public Long getGrantorId() {
-        return this.grantorId;
+    public Long getPayableUserId() {
+        return this.payableUserId;
     }
 
-    public void setGrantorId(Long grantorId) {
-        this.grantorId = grantorId;
+    public void setPayableUserId(Long payableUserId) {
+        this.payableUserId = payableUserId;
     }
 
-    public BigDecimal getRequestAmount() {
-        return this.requestAmount;
+    public BigDecimal getAmount() {
+        return this.amount;
     }
 
-    public void setRequestAmount(BigDecimal requestAmount) {
-        this.requestAmount = requestAmount;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
 }

@@ -59,7 +59,7 @@ public class JdbcTransferDao implements TransferDao {
                 " (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING transfer_id; ";
         Integer newTransferId;
         try {
-            newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferFrom(), transfer.getTransferTo(), transfer.getTransferAmount());
+            newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getPayableUserId(), transfer.getReceivableUserId(), transfer.getAmount());
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
             return -1;

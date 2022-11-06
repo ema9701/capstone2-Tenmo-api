@@ -48,14 +48,14 @@ public class RequestController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public void postRequest(@Valid @RequestBody RequestDTO newRequest, Principal principal) {
+    public Request postRequest(@Valid @RequestBody RequestDTO newRequest, Principal principal) {
         User from = userDao.findByUsername(principal.getName());
-        User to = userDao.getUserById(newRequest.getGrantorId());
-        if (from.getId().equals(newRequest.getGrantorId())) {
+        User to = userDao.getUserById(newRequest.getPayableUserId());
+        if (from.getId().equals(newRequest.getPayableUserId())) {
             throw new InvalidMoneyWireException();
-        } else {
-            requestDao.postRequest(newRequest);
         }
+        Integer newId = requestDao.postRequest(newRequest);
+        return getRequestById(newId);
     }
 
     @ResponseStatus(HttpStatus.OK)

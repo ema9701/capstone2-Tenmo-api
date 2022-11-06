@@ -50,18 +50,18 @@ public class JdbcRequestDao implements RequestDao {
     }
 
     @Override
-    public boolean postRequest(RequestDTO newRequest) {
+    public Integer postRequest(RequestDTO newRequest) {
         final String Sql = " INSERT INTO requests (requester_account, grantor_account, amount) " +
                 " VALUES ((SELECT account_id FROM account WHERE user_id = ?), (SELECT account_id FROM account WHERE user_id = ?), ?) RETURNING request_id ";
         Integer newRequestId;
         try {
-            newRequestId = jdbcTemplate.queryForObject(Sql, Integer.class, newRequest.getRequesterId(),
-                    newRequest.getGrantorId(), newRequest.getRequestAmount());
+            newRequestId = jdbcTemplate.queryForObject(Sql, Integer.class, newRequest.getReceivableUserId(),
+                    newRequest.getPayableUserId(), newRequest.getAmount());
         } catch (DataAccessException e) {
             System.out.println(e.getLocalizedMessage());
-            return false;
+            return -1;
         }
-        return true;
+        return newRequestId;
     }
 
     @Override

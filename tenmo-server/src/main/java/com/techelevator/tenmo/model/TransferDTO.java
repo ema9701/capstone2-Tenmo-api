@@ -6,50 +6,49 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 public class TransferDTO {
 
     @JsonProperty("from")
     @NotNull
-    private Long transferFrom;
+    private Long payableUserId;
     @JsonProperty("to")
     @NotNull
-    private Long transferTo;
+    private Long receivableUserId;
     @JsonProperty("amount")
     @DecimalMin(value = "1.00")
-    private BigDecimal transferAmount;
+    private BigDecimal amount;
 
     public TransferDTO() {
     }
 
-    public TransferDTO(Long transferFrom, Long transferTo, BigDecimal transferAmount) {
-        this.transferFrom = transferFrom;
-        this.transferTo = transferTo;
-        this.transferAmount = transferAmount;
+    public TransferDTO(Long payableUserId, Long receivableUserId, BigDecimal amount) {
+        this.payableUserId = payableUserId;
+        this.receivableUserId = receivableUserId;
+        this.amount = amount;
     }
 
-    public Long getTransferFrom() {
-        return transferFrom;
+    public Long getPayableUserId() {
+        return payableUserId;
     }
 
-    public void setTransferFrom(Long transferFrom) {
-        this.transferFrom = transferFrom;
+    public void setPayableUserId(Long payableUserId) {
+        this.payableUserId = payableUserId;
     }
 
-    public Long getTransferTo() {
-        return transferTo;
+    public Long getReceivableUserId() {
+        return receivableUserId;
     }
 
-    public void setTransferTo(Long transferTo) {
-        this.transferTo = transferTo;
+    public void setReceivableUserId(Long receivableUserId) {
+        this.receivableUserId = receivableUserId;
     }
 
-    public BigDecimal getTransferAmount() {
-        return transferAmount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setTransferAmount(BigDecimal transferAmount) {
-        this.transferAmount = transferAmount;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }
