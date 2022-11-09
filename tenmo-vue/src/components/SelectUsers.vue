@@ -65,9 +65,9 @@
 					this.users = response.data;
 				});
 			},
-			selectRecipient(id) {
-				this.$router.push({ name: "wire-money", params: { id: id } });
-			},
+			// selectRecipient(id) {
+			// 	this.$router.push({ name: "wire-money", params: { id: id } });
+			// },
 		},
 	};
 </script>

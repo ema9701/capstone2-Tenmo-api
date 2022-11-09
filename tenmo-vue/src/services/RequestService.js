@@ -10,16 +10,12 @@ export default {
     return axios.get(`/request/${requestId}`);
   },
 
-  postRequest(request) {
-    return axios.post(`/request`, request); 
+  postRequest(requestDTO) {
+    return axios.post(`/request`, requestDTO); 
   }, 
 
-  approveRequest(requestId) {
-    return axios.put(`/request/${requestId}/approve`);
-  },
-
-  rejectRequest(requestId) {
-    return axios.put(`/request/${requestId}/reject`);
+  updateStatus(requestId, approve) {
+    return axios.put(`/request/${requestId}`, approve)
   }
 
 }

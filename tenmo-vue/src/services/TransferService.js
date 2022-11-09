@@ -10,7 +10,7 @@ export default {
     return axios.get(`/transfer/id/${transferId}`);
   },
 
-  postTransfer(transfer) {
-    return axios.post(`/transfer`, transfer);
+  postTransfer(transferDTO) {
+    return axios.post(`/transfer`, transferDTO);
   },
 }
