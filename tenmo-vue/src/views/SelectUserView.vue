@@ -1,18 +1,18 @@
 <template>
-	<div>
-		<select-users />
-	</div>
+  <div>
+    <list-users />
+  </div>
 </template>
 
 <script>
-	import SelectUsers from "@/components/SelectUsers";
-	export default {
-		data() {
-			return {
-				components: { SelectUsers },
-			};
-		},
-	};
+import ListUsers from "@/components/ListUsers.vue";
+export default {
+  name: "select-user-view",
+  components: { ListUsers },
+  data() {
+    return {};
+  },
+};
 </script>
 
 <style scoped></style>

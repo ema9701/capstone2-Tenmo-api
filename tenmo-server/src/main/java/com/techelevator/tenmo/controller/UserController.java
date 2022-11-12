@@ -21,6 +21,7 @@ public class UserController {
         this.userDao = userDao;
     }
 
+    @PreAuthorize("permitAll")
     @GetMapping(path = "")
     public List<User> listAll() {
         return userDao.listAll();

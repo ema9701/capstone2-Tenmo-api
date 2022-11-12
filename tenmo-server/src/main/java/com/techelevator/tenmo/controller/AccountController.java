@@ -3,10 +3,10 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.User;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 
 
@@ -25,12 +25,12 @@ public class AccountController {
     }
 
     @GetMapping(path = "/userid/{userId}")
-    public Account accountByUserId(@PathVariable Long userId, Principal principal) {
+    public Account accountByAccountId(@PathVariable Long userId, Principal principal) {
         return accountDao.findAccountByUserId(userId);
     }
 
     @GetMapping(path = "/{accountId}")
-    public Account accountByUserId(@PathVariable int accountId) {
+    public Account accountByAccountId(@PathVariable int accountId) {
         return accountDao.findByAccountId(accountId);
     }
 

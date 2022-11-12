@@ -1,12 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import LoginView from "@/views/LoginView.vue"; 
+import LoginView from "@/views/LoginView.vue";
 import UpdateCred from "@/components/UpdateCred"
 import LogoutView from "@/views/LogoutView";
 import RegisterView from "@/views/RegisterView";
-import SelectUserView from "@/views/SelectUserView";  
-import SelectUsers from "@/components/SelectUsers";
-import WireMoney from "@/components/WireMoney";
+import SelectUserView from "@/views/SelectUserView";
 import TransferList from "@/components/TransferList";
 import RequestList from "@/components/RequestList";
 import store from "@/store/index";
@@ -42,9 +40,9 @@ const routes = [
 		name: 'update-cred',
 		component: UpdateCred,
 		meta: {
-		requiresAuth: true,
-		}, 
-	}, 
+			requiresAuth: true,
+		},
+	},
 	{
 		path: "/logout",
 		name: "logout",
@@ -60,47 +58,32 @@ const routes = [
 		meta: {
 			requiresAuth: false,
 		},
-	}, 
+	},
 	{
-		path: '/select',
-		name: 'select-user',
+		path: '/select-users',
+		name: 'select-user-view',
 		component: SelectUserView,
+		meta: {
+			requiresAuth: false,
+		}
+	},
+	{
+		path: '/transfers/',
+		name: 'transfer-list',
+		component: TransferList,
 		meta: {
 			requiresAuth: true,
 		}
 	},
 	{
-	path: '/select-users',
-	name: 'select-users',
-	component: SelectUsers,
-	meta: {
-		requiresAuth: true,
-	}
-},
-{
-	path: '/wire-money/',
-	name: 'wire-money',
-	component: WireMoney,
-	meta: {
-		requiresAuth: true,
-	}
-},
-{
-	path: '/transfers/',
-	name: 'transfer-list',
-	component: TransferList,
-	meta: {
-		requiresAuth: true, 
-	}
-},
-{
-	path: '/requests/',
-	name: 'request-list',
-	component: RequestList,
-	meta: {
-		requiresAuth: true, 
-	}
-},
+		path: '/requests/',
+		name: 'request-list',
+		component: RequestList,
+		meta: {
+			requiresAuth: true,
+		}
+	},
+
 ];
 
 const router = new createRouter({
