@@ -1,19 +1,44 @@
 <template>
   <div>
     <user-card v-for="user in users" :key="user.id" :user="user">
-      <template v-slot: transferOp>
+      <template v-slot:submitForm>
         <v-form>
-          <v-label v-bind="currentUserId" v-model="from"
-            >From: {{ currentUserId }}</v-label
-          >
-          <v-label v-model="to">To: {{ user.id }}</v-label>
-          <v-text-field
-            type="number"
-            label="Amount"
-            v-model.number="amount"
-          ></v-text-field>
-          <v-btn color="blue-darken-1" type="submit" @click.prevent></v-btn>
+          <v-container>
+            <v-row>
+              <v-col cols="auto" md="6">
+                <v-label v-model.number="transactionDTO.from"
+                  >FROM: {{ currentUserId }}
+                </v-label>
+              </v-col>
+              <v-col cols="auto" md="6">
+                <v-label v-model.number="transactionDTO.to">
+                  TO: {{ user.id }}
+                </v-label>
+              </v-col>
+              <v-col cols="auto" md="6">
+                <v-text-field
+                  type="number"
+                  v-model.number="transactionDTO.amount"
+                  label="Amount"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="auto" md="6">
+                <v-radio-group inline required v-model="transactionType">
+                  <v-radio label="Transfer" :value="true"></v-radio>
+                  <v-radio label="Request" :value="false"></v-radio>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-form>
+      </template>
+      <template v-slot:sendTransfer>
+        <v-btn
+          color="secondary"
+          @click.prevent="printDTO(user.id, transactionType)"
+          >Send Money</v-btn
+        >
       </template>
     </user-card>
   </div>
@@ -22,13 +47,22 @@
 <script>
 import UserCard from "@/components/UserCard.vue";
 import accountService from "@/services/AccountService";
+import transferService from "@/services/TransferService";
+import requestService from "@/services/RequestService";
+
 export default {
   name: "list-users",
   components: { UserCard },
   data() {
     return {
       users: [],
-      transferDTO: {},
+      transactionDTO: {
+        from: "",
+        to: "",
+        amount: "",
+      },
+      transactionType: {},
+      processedTransfer: false,
     };
   },
   methods: {
@@ -36,6 +70,31 @@ export default {
       accountService.listUsers().then((response) => {
         this.users = response.data;
       });
+    },
+    sendTransfer(transferDTO) {
+      transferService.postTransfer(transferDTO).then((response) => {
+        if (response.status === 201) {
+          this.processedTransfer = true;
+          alert("Transfer sent!");
+        }
+      });
+    },
+    sendRequest(requestDTO) {
+      requestService.postRequest(requestDTO).then((response) => {
+        if (response.status === 201) {
+          this.processedTransfer = true;
+          alert("Request sent!");
+        }
+      });
+    },
+    printDTO(recipientId, transactionType) {
+      this.transactionDTO.from = this.currentUserId;
+      this.transactionDTO.to = recipientId;
+      if (transactionType === true) {
+        this.sendTransfer(this.transactionDTO);
+      } else if (transactionType === false) {
+        this.sendRequest(this.transactionDTO);
+      }
     },
   },
   computed: {

@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
@@ -85,14 +84,14 @@ public class Request {
         this.status = status;
     }
 
-    public boolean isValid() {
+    public boolean isValidToUpdate() {
         return getStatus().equals(STATUS_TEXT[0]);
     }
 
     public void finalizeRequest(boolean approve) {
-        if (this.isValid() && approve) {
+        if (this.isValidToUpdate() && approve) {
             this.setStatus(STATUS_TEXT[1]);
-        } else if (this.isValid() && !approve) {
+        } else if (this.isValidToUpdate() && !approve) {
             this.setStatus(STATUS_TEXT[2]);
         } else {
             throw new InvalidMoneyWireException();

@@ -1,11 +1,41 @@
 <template>
-  <div id="transaction">
-    <v-card>
-      <v-card-title>Transaction Form</v-card-title>
-      <v-label>FROM: {{ transferDTO.from }}</v-label>
-      <v-label>TO: {{ transferDTO.to }}</v-label>
-      <v-text-field></v-text-field>
-    </v-card>
+  <div id="form-container">
+    <v-form v-model="valid">
+      <v-container>
+        <v-row>
+          <v-col cols="auto" md="12">
+            <v-text-field
+              v-model:transferDTO.from="from"
+              type="number"
+              label="From User Id"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="auto" md="12">
+            <v-text-field
+              v-model:transferDTO.to="to"
+              type="number"
+              label="To User Id"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="auto" md="12">
+            <v-text-field
+              type="number"
+              v-model:transferDTO.amount="amount"
+              label="Amount"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="auto" md="12">
+            <v-radio-group inline required>
+              <v-radio label="Transfer" value="true"></v-radio>
+              <v-radio label="Request" value="false"></v-radio>
+            </v-radio-group>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-form>
   </div>
 </template>
 
@@ -20,7 +50,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      valid: false,
+    };
   },
 };
 </script>

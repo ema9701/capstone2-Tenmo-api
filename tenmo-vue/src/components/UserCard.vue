@@ -15,20 +15,16 @@
           <v-btn color="primary" class="ma-2" @click="dialog = true"
             >Click User
             <v-dialog v-model="dialog">
-              <v-card>
+              <v-card width="400">
                 <v-card-title class="text-center"
                   >Transaction options</v-card-title
                 >
-                <v-card-text>
-                  <slot name="transferOp">
-                    <v-btn color="secondary">Transfer</v-btn>
-                  </slot>
-                  <slot name="requestOp">
-                    <v-btn color="secondary">Request</v-btn>
-                  </slot>
-                </v-card-text>
+                <slot name="submitForm"></slot>
                 <v-card-actions>
-                  <v-btn color="primary" @click="dialog = false">Close</v-btn>
+                  <v-row justify="space-around">
+                    <v-btn color="primary" @click="dialog = false">Close</v-btn>
+                    <slot name="sendTransfer"></slot>
+                  </v-row>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -42,12 +38,7 @@
 <script>
 export default {
   name: "user-card",
-  props: {
-    user: {
-      id: Number,
-      username: String,
-    },
-  },
+  props: ["user"],
 
   data() {
     return {
