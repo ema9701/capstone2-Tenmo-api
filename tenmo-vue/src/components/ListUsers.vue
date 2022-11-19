@@ -1,8 +1,14 @@
 <template>
   <div>
-    <user-card v-for="user in users" :key="user.id" :user="user">
+    <user-card v-for="user in filteredUserList" :key="user.id" :user="user">
       <template v-slot:submitForm>
         <v-form>
+          <v-alert type="error" v-if="invalidMoneyWire"
+            >Invalid request</v-alert
+          >
+          <v-alert type="success" v-if="processedTransfer"
+            >Transaction processed!</v-alert
+          >
           <v-container>
             <v-row>
               <v-col cols="auto" md="6">
@@ -36,7 +42,7 @@
       <template v-slot:sendTransfer>
         <v-btn
           color="secondary"
-          @click.prevent="printDTO(user.id, transactionType)"
+          @click.prevent="wireMoney(user.id, transactionType)"
           >Send Money</v-btn
         >
       </template>
@@ -47,8 +53,7 @@
 <script>
 import UserCard from "@/components/UserCard.vue";
 import accountService from "@/services/AccountService";
-import transferService from "@/services/TransferService";
-import requestService from "@/services/RequestService";
+import trxServices from "@/services/TransactionServices";
 
 export default {
   name: "list-users",
@@ -63,6 +68,7 @@ export default {
       },
       transactionType: {},
       processedTransfer: false,
+      invalidMoneyWire: false,
     };
   },
   methods: {
@@ -72,34 +78,53 @@ export default {
       });
     },
     sendTransfer(transferDTO) {
-      transferService.postTransfer(transferDTO).then((response) => {
-        if (response.status === 201) {
-          this.processedTransfer = true;
-          alert("Transfer sent!");
-        }
-      });
+      trxServices
+        .postTransfer(transferDTO)
+        .then((response) => {
+          if (response.status === 201) {
+            this.processedTransfer = true;
+            this.invalidMoneyWire = false;
+          }
+        })
+        .catch((error) => {
+          const response = error.response;
+          if (response.status === 400) {
+            this.invalidMoneyWire = true;
+            this.processedTransfer = false;
+          }
+        });
     },
     sendRequest(requestDTO) {
-      requestService.postRequest(requestDTO).then((response) => {
-        if (response.status === 201) {
-          this.processedTransfer = true;
-          alert("Request sent!");
-        }
-      });
+      trxServices
+        .postRequest(requestDTO)
+        .then((response) => {
+          if (response.status === 201) {
+            this.processedTransfer = true;
+            this.invalidMoneyWire = false;
+          }
+        })
+        .catch((error) => {
+          const response = error.response;
+          if (response.status === 400) {
+            this.invalidMoneyWire = true;
+            this.processedTransfer = false;
+          }
+        });
     },
-    printDTO(recipientId, transactionType) {
+    wireMoney(recipientId, transactionType) {
       this.transactionDTO.from = this.currentUserId;
       this.transactionDTO.to = recipientId;
-      if (transactionType === true) {
-        this.sendTransfer(this.transactionDTO);
-      } else if (transactionType === false) {
-        this.sendRequest(this.transactionDTO);
-      }
+      transactionType === true
+        ? this.sendTransfer(this.transactionDTO)
+        : this.sendRequest(this.requestDTO);
     },
   },
   computed: {
     currentUserId() {
       return this.$store.state.user.id;
+    },
+    filteredUserList() {
+      return this.users.filter((f) => f.id !== this.currentUserId);
     },
   },
   created() {
