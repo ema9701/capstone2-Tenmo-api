@@ -27,7 +27,8 @@ public class JdbcRequestDao implements RequestDao {
                 " request_status FROM requests " +
                 " JOIN account ON requests.requester_account = account.account_id " +
                 " OR (requests.grantor_account = account.account_id) " +
-                " WHERE user_id = ?; ";
+                " WHERE user_id = ? " +
+                " ORDER BY request_date DESC; ";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         while (results.next()) {

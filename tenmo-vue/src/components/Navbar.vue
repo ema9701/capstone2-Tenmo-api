@@ -1,9 +1,9 @@
 <template>
-  <v-navigation-drawer v-model="drawer" app>
+  <v-navigation-drawer v-model="drawer" app v-if="$store.state.token != ''">
     <v-layout>
       <v-list color="transparent">
         <v-list-item prepend-icon="mdi-view-dashboard">
-          <v-btn flat
+          <v-btn flat class="flex-start"
             ><router-link class="rlink" v-bind:to="{ name: 'home' }"
               >Home</router-link
             ></v-btn
@@ -16,28 +16,16 @@
             ></v-btn
           ></v-list-item
         >
-        <!-- <v-list-item prepend-icon="mdi-cash">
+        <v-list-item prepend-icon="mdi-cash">
           <v-btn flat
-            ><router-link class="rlink" v-bind:to="{ name: 'wire-money' }"
-              >Wire Money</router-link
-            ></v-btn
-          ></v-list-item
-        > -->
-        <v-list-item prepend-icon="mdi-text-search"
-          ><v-btn flat
-            ><router-link class="rlink" v-bind:to="{ name: 'transfer-list' }"
-              >View Transfers</router-link
+            ><router-link
+              class="rlink"
+              v-bind:to="{ name: 'transactions-list-view' }"
+              >View Transactions</router-link
             ></v-btn
           ></v-list-item
         >
-        <v-list-item prepend-icon="mdi-text-search"
-          ><v-btn flat
-            ><router-link class="rlink" v-bind:to="{ name: 'request-list' }"
-              >View Requests</router-link
-            ></v-btn
-          ></v-list-item
-        >
-        <v-list-item prepend-icon="mdi-refresh" v-if="$store.state.token != ''"
+        <v-list-item prepend-icon="mdi-refresh"
           ><v-btn flat
             ><router-link class="rlink" v-bind:to="{ name: 'update-cred' }"
               >Change Password</router-link
@@ -48,7 +36,7 @@
     </v-layout>
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block v-if="$store.state.token != ''">
+        <v-btn block>
           <router-link class="rlink" v-bind:to="{ name: 'logout' }"
             >Logout</router-link
           >

@@ -5,8 +5,7 @@ import UpdateCred from "@/components/UpdateCred"
 import LogoutView from "@/views/LogoutView";
 import RegisterView from "@/views/RegisterView";
 import SelectUserView from "@/views/SelectUserView";
-import TransferList from "@/components/TransferList";
-import RequestList from "@/components/RequestList";
+import TransactionListView from "@/views/TransactionListView"
 import store from "@/store/index";
 
 const routes = [
@@ -48,7 +47,7 @@ const routes = [
 		name: "logout",
 		component: LogoutView,
 		meta: {
-			requiresAuth: false,
+			requiresAuth: true,
 		},
 	},
 	{
@@ -64,26 +63,17 @@ const routes = [
 		name: 'select-user-view',
 		component: SelectUserView,
 		meta: {
-			requiresAuth: false,
-		}
-	},
-	{
-		path: '/transfers/',
-		name: 'transfer-list',
-		component: TransferList,
-		meta: {
 			requiresAuth: true,
 		}
 	},
 	{
-		path: '/requests/',
-		name: 'request-list',
-		component: RequestList,
+		path: '/view-transactions',
+		name: 'transactions-list-view',
+		component: TransactionListView,
 		meta: {
 			requiresAuth: true,
 		}
 	},
-
 ];
 
 const router = new createRouter({
