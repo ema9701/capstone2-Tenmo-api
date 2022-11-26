@@ -1,14 +1,17 @@
 <template>
   <div id="authorize-btn">
     <v-btn @click="dialog = true">
+      Update status
       <v-dialog v-model="dialog">
         <v-card width="400">
           <v-card-title class="text-center"></v-card-title>
-          <v-form></v-form>
+          <v-form>
+            <slot name="statusSelect"></slot>
+          </v-form>
           <v-card-actions>
             <v-row justify="space-around">
               <v-btn color="primary" @click="dialog = false">Close</v-btn>
-              <v-btn>Update</v-btn>
+              <slot name="update"></slot>
             </v-row>
           </v-card-actions>
         </v-card>
@@ -19,6 +22,8 @@
 
 <script>
 export default {
+  name: "update-status-btn",
+  props: ["request"],
   data() {
     return {
       dialog: false,

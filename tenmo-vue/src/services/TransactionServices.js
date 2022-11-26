@@ -31,7 +31,7 @@ export default {
     },
 
     updateStatus(requestId, approve) {
-        return axios.put(`/request/${requestId}`, approve)
+        return axios.put(`/request/${requestId}?approve=${approve}`)
     }
 
 }

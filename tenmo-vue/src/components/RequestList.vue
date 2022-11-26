@@ -37,7 +37,21 @@
               </tr>
             </tbody>
           </v-table>
-          <v-btn v-if="request.status === 'PENDING'">Test</v-btn>
+          <request-btn v-if="request.status === 'PENDING'">
+            <template v-slot:statusSelect>
+              <v-radio-group v-model="requestApproved" required>
+                <v-radio label="Approve Request" :value="true"></v-radio>
+                <v-radio label="Reject Request" :value="false"></v-radio>
+              </v-radio-group>
+            </template>
+            <template v-slot:update>
+              <v-btn
+                color="secondary"
+                @click="updateRequestStatus(request.requestId, requestApproved)"
+                >Submit update</v-btn
+              >
+            </template>
+          </request-btn>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -45,12 +59,18 @@
 </template>
 
 <script>
-import requestService from "@/services/RequestService";
+import trxServices from "@/services/TransactionServices";
+import requestBtn from "@/components/RequestAuthBtn.vue";
+
 export default {
+  components: {
+    requestBtn,
+  },
   data() {
     return {
       user: {},
       requests: {},
+      requestApproved: {},
     };
   },
   created() {
@@ -58,9 +78,21 @@ export default {
   },
   methods: {
     listRequests(userId) {
-      requestService.listRequestsByUserId(userId).then((response) => {
+      trxServices.listRequestsByUserId(userId).then((response) => {
         this.requests = response.data;
       });
+    },
+    updateRequestStatus(requestId, approve) {
+      trxServices
+        .updateStatus(requestId, approve)
+        .then((response) => {
+          if (response.status === 200) {
+            alert("Request status has been updated!");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
   },
   computed: {

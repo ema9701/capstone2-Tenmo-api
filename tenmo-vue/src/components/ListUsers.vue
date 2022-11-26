@@ -78,6 +78,7 @@ export default {
       });
     },
     sendTransfer(transferDTO) {
+      transferDTO = this.transactionDTO;
       trxServices
         .postTransfer(transferDTO)
         .then((response) => {
@@ -95,6 +96,7 @@ export default {
         });
     },
     sendRequest(requestDTO) {
+      requestDTO = this.transactionDTO;
       trxServices
         .postRequest(requestDTO)
         .then((response) => {

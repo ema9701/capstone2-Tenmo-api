@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import transferService from "@/services/TransferService";
+import trxServices from "@/services/TransactionServices.js";
 
 export default {
   data() {
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     listTransfers(userId) {
-      transferService.listTransfersByUserId(userId).then((response) => {
+      trxServices.listTransfersByUserId(userId).then((response) => {
         this.transfers = response.data;
       });
     },
@@ -70,16 +70,6 @@ export default {
   computed: {
     currentUserId() {
       return this.$store.state.user.id;
-    },
-    filteredList() {
-      return this.transfers.filter((f) => {
-        f.transferId.includes(this.filter.transferId) &&
-          f.transferDate.includes(this.filter.transferDate) &&
-          f.accountFrom.includes(this.filter.accountFrom) &&
-          f.accountTo.includes(this.filter.accountTo) &&
-          f.amount.includes(this.filter.amount) &&
-          f.status.toUpperCase().includes(this.filter.status.toUpperCase());
-      });
     },
   },
 };

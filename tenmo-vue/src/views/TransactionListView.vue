@@ -2,13 +2,13 @@
   <div id="transactions">
     <v-tabs bg-color="primary" id="tab-display" grow>
       <v-tab
-        title="Transfers"
+        title="Processed Transfers"
         @click="
           (showTransfers = !showTransfers), (showRequests = !showRequests)
         "
       ></v-tab>
       <v-tab
-        title="Requests"
+        title="Processed Requests"
         @click="
           (showRequests = !showRequests), (showTransfers = !showTransfers)
         "
