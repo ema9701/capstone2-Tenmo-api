@@ -21,10 +21,12 @@ CREATE SEQUENCE seq_account_id INCREMENT BY 1 START WITH 2001 NO MAXVALUE;
 CREATE TABLE account (
 	account_id int NOT NULL DEFAULT nextval('seq_account_id'),
 	user_id int NOT NULL,
-	balance decimal(13, 2) NOT NULL,
+	balance decimal(13, 2) NOT NULL DEFAULT (1000.00),
 	CONSTRAINT PK_account PRIMARY KEY (account_id),
 	CONSTRAINT FK_account_tenmo_user FOREIGN KEY (user_id) REFERENCES tenmo_user (user_id)
 );
+
+--CREATE SEQUENCE seq_transfer_id INCREMENT BY 1 START WITH 3001 NO MAXVALUE;
 
 CREATE TABLE transfers (
 	transfer_id serial NOT NULL,
@@ -35,6 +37,8 @@ CREATE TABLE transfers (
 	transfer_status varchar(25) DEFAULT 'APPROVED',
 	CONSTRAINT PK_transfers PRIMARY KEY (transfer_id)
 );
+
+--CREATE SEQUENCE seq_request_id INCREMENT BY 1 START WITH 4001 NO MAXVALUE;
 
 CREATE TABLE requests (
 	request_id serial NOT NULL,
@@ -70,40 +74,40 @@ ADD CONSTRAINT CK_requests_status CHECK (
 		request_status IN ('PENDING', 'APPROVED', 'REJECTED')
 	);
 
-INSERT INTO tenmo_user (username, password_hash)
-VALUES (
-		'user1',
-		'$2a$10$A4EQFlbUdU1IV11aQc20jORTMYJ0/th12R4vk8Ybjjc7FrhfA9VRK'
-	)
-RETURNING user_id;
-INSERT INTO account (user_id, balance)
-VALUES (1001, 1000.00)
-RETURNING account_id;
-INSERT INTO tenmo_user (username, password_hash)
-VALUES (
-		'user2',
-		'$2a$10$egA7JPET/TY55ZiXcGTygu4cGYk2HA7wsxLTYFczWwUT3BlNJ/ogq'
-	)
-RETURNING user_id;
-INSERT INTO account (user_id, balance)
-VALUES (1002, 1000.00)
-RETURNING account_id;
-INSERT INTO tenmo_user (username, password_hash)
-VALUES (
-		'user3',
-		'$2a$10$TqCYRyEbZmovdUJyiuNe4..x3Ymdv7l/hkay9W/l/AJpodRhW0upy'
-	)
-RETURNING user_id;
-INSERT INTO account (user_id, balance)
-VALUES (1003, 1000.00)
-RETURNING account_id;
-INSERT INTO tenmo_user (username, password_hash)
-VALUES (
-		'user4',
-		'$2a$10$dJ.3je1GVmKWeZQyKUzPveCH/G3WGDzArlmFoWgcCkYg72GB7f59.'
-	)
-RETURNING user_id;
-INSERT INTO account (user_id, balance)
-VALUES (1004, 1000.00)
-RETURNING account_id;
+--INSERT INTO tenmo_user (username, password_hash)
+--VALUES (
+--		'user1',
+--		'$2a$10$A4EQFlbUdU1IV11aQc20jORTMYJ0/th12R4vk8Ybjjc7FrhfA9VRK'
+--	)
+--RETURNING user_id;
+--INSERT INTO account (user_id, balance)
+--VALUES (1001, 1000.00)
+--RETURNING account_id;
+--INSERT INTO tenmo_user (username, password_hash)
+--VALUES (
+--		'user2',
+--		'$2a$10$egA7JPET/TY55ZiXcGTygu4cGYk2HA7wsxLTYFczWwUT3BlNJ/ogq'
+--	)
+--RETURNING user_id;
+--INSERT INTO account (user_id, balance)
+--VALUES (1002, 1000.00)
+--RETURNING account_id;
+--INSERT INTO tenmo_user (username, password_hash)
+--VALUES (
+--		'user3',
+--		'$2a$10$TqCYRyEbZmovdUJyiuNe4..x3Ymdv7l/hkay9W/l/AJpodRhW0upy'
+--	)
+--RETURNING user_id;
+--INSERT INTO account (user_id, balance)
+--VALUES (1003, 1000.00)
+--RETURNING account_id;
+--INSERT INTO tenmo_user (username, password_hash)
+--VALUES (
+--		'user4',
+--		'$2a$10$dJ.3je1GVmKWeZQyKUzPveCH/G3WGDzArlmFoWgcCkYg72GB7f59.'
+--	)
+--RETURNING user_id;
+--INSERT INTO account (user_id, balance)
+--VALUES (1004, 1000.00)
+--RETURNING account_id;
 COMMIT;
